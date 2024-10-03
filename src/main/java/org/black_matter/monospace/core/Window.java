@@ -1,17 +1,21 @@
 package org.black_matter.monospace.core;
 
 import lombok.Getter;
+import org.black_matter.monospace.event.EventCaller;
+import org.black_matter.monospace.events.core.WindowResizeEvent;
 import org.joml.Vector2i;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.IntBuffer;
+import java.util.function.BiConsumer;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 
-public class Window {
+public class Window implements EventCaller {
 	
 	private static long ctxShare = -1;
 	
@@ -47,10 +51,22 @@ public class Window {
 			ctxShare = handle;
 		}
 		
-		glfwSetWindowPos(handle, position.x, position.y);
+		if(position.x == -1 || position.y == -1 && !fullscreen) {
+			var vmode = glfwGetVideoMode(monitor);
+			
+			glfwSetWindowPos(
+				handle,
+				(vmode.width() / 2) - (dimensions.x / 2),
+				(vmode.height() / 2) - (dimensions.y / 2)
+			);
+		} else if(!fullscreen) {
+			glfwSetWindowPos(handle, position.x, position.y);
+		}
 		
 		glfwMakeContextCurrent(handle);
 		GL.createCapabilities();
+		
+		registerCallbacks();
 	}
 	
 	public Window(String title, Vector2i position, Vector2i dimensions) {
@@ -124,5 +140,11 @@ public class Window {
 	
 	public void setDimensions(Vector2i dimensions) {
 		glfwSetWindowSize(handle, dimensions.x, dimensions.y);
+	}
+	
+	public void registerCallbacks() {
+		glfwSetWindowSizeCallback(handle,
+			(_handle, _width, _height) ->
+				this.callEvent(WindowResizeEvent.class, this, new WindowResizeEvent(_handle, _width, _height)));
 	}
 }

@@ -1,7 +1,10 @@
 package org.black_matter.monospace.event;
 
+import org.black_matter.monospace.util.ListHashMap;
+
 import java.util.*;
 
+// TODO global events?
 public interface EventCaller {
 	
 	Map<Class<?>, Map<Object, EventCallback>> eventListeners = new HashMap<>();

@@ -1,12 +1,10 @@
 package org.black_matter.monospace.object;
 
 import lombok.Getter;
+import org.black_matter.monospace.util.ListHashMap;
 import org.black_matter.monospace.world.GameWorld;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GameObjectManager {
 	
@@ -20,11 +18,11 @@ public class GameObjectManager {
 	}
 	
 	public Map<Long, GameObject> get() {
-		return objects;
+		return Collections.unmodifiableMap(objects);
 	}
 	
 	public void add(GameObject object) {
-		object.id = ++lastId;
+		object.setId(++lastId);
 		objects.put(object.getId(), object);
 		object.setWorld(world);
 	}
@@ -32,25 +30,10 @@ public class GameObjectManager {
 	public void remove(GameObject object) {
 		objects.remove(object.getId());
 		object.setWorld(null);
-		object.id = -1;
+		object.setId(-1);
 	}
 	
 	public <T extends GameObject> T query(long id) {
 		return (T) objects.get(id);
-	}
-	
-	public List<GameObject> query(Class<? extends GameObject.Component> component) {
-		List<GameObject> out = new ArrayList<>();
-		
-		for(var o : objects.values()) {
-			for(var c : o.getComponents()) {
-				if(c.getClass() == component) {
-					out.add(o);
-					break;
-				}
-			}
-		}
-		
-		return out;
 	}
 }

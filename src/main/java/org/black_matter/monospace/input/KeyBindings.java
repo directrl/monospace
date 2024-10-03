@@ -19,8 +19,6 @@ public class KeyBindings {
 			if(!KEY_BINDS.containsKey(e.name())) return;
 			KEY_BINDS.replace(e.name(), (int) e.to());
 		});
-		
-		GLFW.glfwSetKeyCallback(Monospace.window().getHandle(), this::callback);
 	}
 	
 	public void registerAction(String name, int defaultKey, KeyAction action) {
@@ -34,12 +32,21 @@ public class KeyBindings {
 		}
 	}
 	
-	private void callback(long window, int key, int scancode, int action, int mods) {
+	protected void callback(long window, int key, int scancode, int action, int mods) {
 		for(var entry : KEY_BINDS.entrySet()) {
 			var boundKey = entry.getValue();
 			var boundAction = KEY_ACTIONS.get(entry.getKey());
 			
 			if(key != boundKey) continue;
+			
+			// TODO this is truly awful
+			/*if((key != GLFW.GLFW_KEY_LEFT_SHIFT
+				|| key != GLFW.GLFW_KEY_LEFT_ALT
+				|| key != GLFW.GLFW_KEY_LEFT_CONTROL
+				|| key != GLFW.GLFW_KEY_RIGHT_SHIFT
+				|| key != GLFW.GLFW_KEY_RIGHT_ALT
+				|| key != GLFW.GLFW_KEY_RIGHT_SHIFT)
+				&& mods != boundAction.mods()) continue;*/
 			
 			switch(action) {
 				case GLFW.GLFW_PRESS:

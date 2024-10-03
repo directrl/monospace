@@ -7,8 +7,10 @@ import org.json.JSONObject;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 
+// TODO use properties instead?
 public class GameSettings implements Closeable, EventCaller {
 	
 	private File configFile;
@@ -33,6 +35,42 @@ public class GameSettings implements Closeable, EventCaller {
 	
 	public <T> T getOptionOrDefault(String name, T _default) {
 		if(options.has(name)) {
+			var o = options.get(name);
+			
+			// TODO i hate this!!!!!!
+			// json is a stupid way to store settings because double==float and int==byte==short== >:(
+			if(o instanceof BigDecimal) {
+				switch(_default) {
+					case Float f:
+						return (T) (Float) ((BigDecimal) o).floatValue();
+					case Double d:
+						return (T) (Double) ((BigDecimal) o).doubleValue();
+					case Long l:
+						return (T) (Long) ((BigDecimal) o).longValue();
+					case Byte b:
+						return (T) (Byte) ((BigDecimal) o).byteValue();
+					case Short s:
+						return (T) (Short) ((BigDecimal) o).shortValue();
+					default:
+						break;
+				}
+			} else if(o instanceof Integer) {
+				switch(_default) {
+					case Float f:
+						return (T) (Float) ((BigDecimal) o).floatValue();
+					case Double d:
+						return (T) (Double) ((BigDecimal) o).doubleValue();
+					case Long l:
+						return (T) (Long) ((BigDecimal) o).longValue();
+					case Byte b:
+						return (T) (Byte) ((BigDecimal) o).byteValue();
+					case Short s:
+						return (T) (Short) ((BigDecimal) o).shortValue();
+					default:
+						break;
+				}
+			}
+			
 			return (T) options.get(name);
 		} else {
 			options.put(name, _default);
@@ -40,13 +78,13 @@ public class GameSettings implements Closeable, EventCaller {
 		}
 	}
 	
-	public <T> T getOptionOrNull(String name) {
+	/*public <T> T getOptionOrNull(String name) {
 		if(options.has(name)) {
 			return (T) options.get(name);
 		} else {
 			return null;
 		}
-	}
+	}*/
 	
 	public void setOption(String name, Object value) {
 		this.callEvent(GameOptionChangeEvent.class, this,
