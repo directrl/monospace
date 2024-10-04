@@ -3,6 +3,7 @@ package main;
 import input.CameraMove;
 import org.black_matter.monospace.core.Monospace;
 import org.black_matter.monospace.input.KeyAction;
+import org.black_matter.monospace.input.KeyBinding;
 import org.black_matter.monospace.object.objects.CubeObject;
 import org.black_matter.monospace.render.camera.PerspectiveCamera;
 import org.black_matter.monospace.world.GameWorld;
@@ -22,6 +23,8 @@ public class Game extends Monospace {
 	}
 	
 	CubeObject cube;
+
+	KeyBinding testBinding;
 	
 	@Override
 	public void init() {
@@ -58,6 +61,8 @@ public class Game extends Monospace {
 		
 		mouseBindings().registerAction("cameraMove", GLFW.GLFW_MOUSE_BUTTON_RIGHT, new CameraMove.Rotation());
 		
+		testBinding = keyBindings().registerBinding(new KeyBinding("test", GLFW.GLFW_KEY_H, 0));
+
 		world = new GameWorld();
 		world.load();
 		
@@ -78,6 +83,10 @@ public class Game extends Monospace {
 		if(rotation >= 360) rotation = 0;
 		cube.rotation(1, 1, 1, (float) Math.toRadians(rotation));
 		super.update(delta);
+
+		if(testBinding.pressed) {
+			System.out.println("hello!");
+		}
 	}
 	
 	@Override

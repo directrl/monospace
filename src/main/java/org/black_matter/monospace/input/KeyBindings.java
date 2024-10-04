@@ -2,6 +2,7 @@ package org.black_matter.monospace.input;
 
 import org.black_matter.monospace.core.Monospace;
 import org.black_matter.monospace.events.core.GameOptionChangeEvent;
+import org.json.JSONObject;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.HashMap;
@@ -24,9 +25,9 @@ public class KeyBindings {
 			//if(!KEY_BINDS.containsKey(e.name())) return;
 			//KEY_BINDS.replace(e.name(), (int) e.to());
 
-			if(KEYBINDINGS.containsKey(e.name())) {
-				var binding = KEYBINDINGS.get(e.name());
-				binding.fromOption(e.to());
+			if(keyBindings.containsKey(e.name())) {
+				var binding = keyBindings.get(e.name());
+				binding.fromOption((JSONObject) e.to());
 			}
 		});
 	}
@@ -42,12 +43,13 @@ public class KeyBindings {
 		}
 	}
 
-	public void registerBinding(KeyBinding binding) {
+	public KeyBinding registerBinding(KeyBinding binding) {
 		binding.fromOption(
-			Monospace.gameSettings().getOptionOrDefault(OPTION_PREFIX + name, binding.toOption())
+			Monospace.gameSettings().getOptionOrDefault(OPTION_PREFIX + binding.getName(), binding.toOption())
 		);
 
 		keyBindings.put(binding.getName(), binding);
+		return binding;
 	}
 	
 	protected void callback(long window, int key, int scancode, int action, int mods) {
