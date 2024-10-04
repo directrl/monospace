@@ -2,6 +2,7 @@ package org.black_matter.monospace.render.gl;
 
 import lombok.Getter;
 import org.black_matter.monospace.core.Monospace;
+import org.black_matter.monospace.util.Resource;
 import org.black_matter.monospace.util.Resources;
 
 import java.io.IOException;
@@ -88,8 +89,12 @@ public class ShaderProgram {
 		static {
 			try {
 				programs.put("world", new ShaderProgram(new Shader[] {
-					new Shader(GL_VERTEX_SHADER, Monospace.engineResources().readString(Resources.Type.SHADERS, "world.vert")),
-					new Shader(GL_FRAGMENT_SHADER, Monospace.engineResources().readString(Resources.Type.SHADERS, "world.frag"))
+					new Shader(GL_VERTEX_SHADER, Monospace.engineResources()
+						.get(Resource.Type.SHADERS, "world.vert")
+						.readAsString()),
+					new Shader(GL_FRAGMENT_SHADER, Monospace.engineResources()
+						.get(Resource.Type.SHADERS, "world.frag")
+						.readAsString())
 				}));
 			} catch(RuntimeException e) {
 				e.printStackTrace();
