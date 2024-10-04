@@ -145,6 +145,7 @@ public abstract class Monospace implements EventCaller {
 				
 				if(world != null) {
 					GameWorld.WORLD_SHADER.bind();
+					GameWorld.WORLD_SHADER.getUniforms().load("texSampler", 0);
 					camera.render(GameWorld.WORLD_SHADER);
 					
 					world.update(timer.getDelta());

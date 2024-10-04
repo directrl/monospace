@@ -34,12 +34,16 @@ public class UniformMap {
 	public void load(String name, Matrix4f value) {
 		try(MemoryStack stack = MemoryStack.stackPush()) {
 			Integer location = uniforms.get(name);
-			
-			if(location == null) {
-				location = create(name);
-			}
+			if(location == null) location = create(name);
 			
 			glUniformMatrix4fv(location, false, value.get(stack.mallocFloat(16)));
 		}
+	}
+	
+	public void load(String name, int value) {
+		Integer location = uniforms.get(name);
+		if(location == null) location = create(name);
+		
+		glUniform1i(location, value);
 	}
 }

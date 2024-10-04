@@ -77,8 +77,7 @@ public class Game extends Monospace {
 	public void update(float delta) {
 		rotation += 1;
 		if(rotation >= 360) rotation = 0;
-		cube.rotation(1, 1, 1, (float) Math.toRadians(rotation));
-		super.update(delta);
+		//cube.rotation(1, 1, 1, (float) Math.toRadians(rotation));
 
 		float[] cameraMoveVector = new float[6];
 		
