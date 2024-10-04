@@ -13,6 +13,7 @@ import org.black_matter.monospace.render.gl.ShaderProgram;
 import org.black_matter.monospace.ui.DebugUI;
 import org.black_matter.monospace.ui.imgui.ImGuiUI;
 import org.black_matter.monospace.util.DeltaTimer;
+import org.black_matter.monospace.util.Resources;
 import org.black_matter.monospace.world.GameWorld;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
@@ -37,6 +38,9 @@ public abstract class Monospace implements EventCaller {
 	@Getter private static KeyBindings keyBindings;
 	@Getter private static Input input;
 	@Getter private static DeltaTimer timer;
+	
+	@Getter private static Resources engineResources;
+	@Getter private static Resources gameResources;
 	
 	@Getter protected static Camera3D camera;
 	@Getter protected static GameWorld world;
@@ -67,6 +71,9 @@ public abstract class Monospace implements EventCaller {
 			e.printStackTrace();
 			System.exit(1);
 		}
+		
+		engineResources = new Resources("monospace");
+		gameResources = new Resources(id);
 		
 		debug = gameSettings.getOptionOrDefault("debug", false);
 		

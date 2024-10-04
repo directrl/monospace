@@ -26,11 +26,6 @@ public record Shader(int type, String code) {
 		return id;
 	}
 	
-	public static Shader fromResources(int id, String path) throws IOException {
-		String code = new String(Shader.class.getResourceAsStream("/shaders/" + path).readAllBytes());
-		return new Shader(id, code);
-	}
-	
 	public static class CompilationException extends Exception {
 		
 		public CompilationException(int id) {
