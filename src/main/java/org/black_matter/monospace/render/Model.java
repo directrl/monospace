@@ -16,17 +16,14 @@ import java.util.Map;
 public class Model implements Closeable {
 	
 	@Getter private final String id;
-	//@Getter private final List<Mesh> meshes;
 	@Getter private final List<Material> materials;
 	
-	public Model(String id, /*List<Mesh> meshes,*/ List<Material> materials) {
+	public Model(String id, List<Material> materials) {
 		this.id = id;
-		//this.meshes = meshes;
 		this.materials = materials;
 	}
 	
 	public void render() {
-		//meshes.forEach(Mesh::render);
 		materials.forEach(material -> {
 			GL30.glActiveTexture(GL30.GL_TEXTURE0);
 			material.getTexture().bind();
@@ -37,7 +34,6 @@ public class Model implements Closeable {
 	@SneakyThrows
 	@Override
 	public void close() {
-		//meshes.forEach(Mesh::close);
 		materials.forEach(Material::close);
 	}
 	
