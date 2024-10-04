@@ -1,8 +1,11 @@
 package main;
 
+import object.CustomModels;
+import object.TestObject;
 import org.black_matter.monospace.core.Monospace;
 import org.black_matter.monospace.events.input.MouseMoveEvent;
 import org.black_matter.monospace.input.KeyBinding;
+import org.black_matter.monospace.object.GameObject;
 import org.black_matter.monospace.object.objects.CubeObject;
 import org.black_matter.monospace.render.camera.PerspectiveCamera;
 import org.black_matter.monospace.world.GameWorld;
@@ -18,11 +21,12 @@ public class Game extends Monospace {
 	public Game() {
 		super("test-game");
 		
-		engineSettings().setWindowTitle("Test main.Game");
+		engineSettings().setWindowTitle("Monospace test");
 		engineSettings().setFps(60);
 	}
 	
 	CubeObject cube;
+	GameObject test;
 	
 	KeyBinding cameraForward;
 	KeyBinding cameraBackward;
@@ -37,6 +41,8 @@ public class Game extends Monospace {
 	@Override
 	public void init() {
 		super.init();
+		
+		CustomModels.load();
 		
 		mouseSensitivity = Game.gameSettings().getOptionOrDefault("mouseSensitivity", 0.5f);
 		
@@ -55,8 +61,10 @@ public class Game extends Monospace {
 		camera = new PerspectiveCamera();
 		camera.setFov(45f);
 		
+		test = new TestObject().z(-5).x(-2);
 		cube = (CubeObject) new CubeObject().z(-5);
 		world.getObjectManager().add(cube);
+		world.getObjectManager().add(test);
 		
 		onEvent(MouseMoveEvent.class, Game.input(), e -> {
 			if(cameraMove.isDown()) {
@@ -77,8 +85,7 @@ public class Game extends Monospace {
 	public void update(float delta) {
 		rotation += 1;
 		if(rotation >= 360) rotation = 0;
-		cube.rotation(1, 1, 1, (float) Math.toRadians(rotation));
-		super.update(delta);
+		//cube.rotation(1, 1, 1, (float) Math.toRadians(rotation));
 
 		float[] cameraMoveVector = new float[6];
 		

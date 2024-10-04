@@ -20,7 +20,7 @@ public class Mesh implements Closeable {
 	@Getter private int vertexCount;
 	@Getter private int vaoId;
 	
-	public Mesh(float[] positions, float[] colors, int[] indices) {
+	public Mesh(float[] positions, float[] texCoords, int[] indices) {
 		try(MemoryStack stack = MemoryStack.stackPush()) {
 			this.vertexCount = indices.length;
 			
@@ -40,17 +40,17 @@ public class Mesh implements Closeable {
 			glEnableVertexAttribArray(0);
 			glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
 			
-			// colors
+			// texture coordinates
 			vboId = glGenBuffers();
 			vboIds.add(vboId);
 			
-			FloatBuffer colorsBuffer = stack.callocFloat(colors.length);
-			colorsBuffer.put(0, colors);
+			FloatBuffer texCoordsBuffer = stack.callocFloat(texCoords.length);
+			texCoordsBuffer.put(0, texCoords);
 			
 			glBindBuffer(GL_ARRAY_BUFFER, vboId);
-			glBufferData(GL_ARRAY_BUFFER, colorsBuffer, GL_STATIC_DRAW);
+			glBufferData(GL_ARRAY_BUFFER, texCoordsBuffer, GL_STATIC_DRAW);
 			glEnableVertexAttribArray(1);
-			glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 0);
+			glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
 			
 			// indices
 			vboId = glGenBuffers();
