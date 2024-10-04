@@ -11,14 +11,32 @@ public class KeyBinding {
 	@Getter @Setter private int key;
 	@Getter @Setter private int mods;
 
-	public boolean down = false;
-	public boolean pressed = false;
-	public boolean released = false;
+	boolean down = false;
+	boolean pressed = false;
+	boolean released = false;
+	
+	boolean stupid = false;
 
 	public KeyBinding(String name, int key, int mods) {
 		this.name = name;
 		this.key = key;
 		this.mods = mods;
+	}
+	
+	public boolean wasPressed() {
+		var old = pressed;
+		pressed = false;
+		return old;
+	}
+	
+	public boolean wasReleased() {
+		var old = released;
+		released = false;
+		return old;
+	}
+	
+	public boolean isDown() {
+		return down;
 	}
 
 	public void fromOption(JSONObject o) {

@@ -7,7 +7,6 @@ import org.apache.log4j.Logger;
 import org.black_matter.monospace.event.EventCaller;
 import org.black_matter.monospace.input.Input;
 import org.black_matter.monospace.input.KeyBindings;
-import org.black_matter.monospace.input.MouseBindings;
 import org.black_matter.monospace.render.camera.Camera3D;
 import org.black_matter.monospace.render.gl.Shader;
 import org.black_matter.monospace.render.gl.ShaderProgram;
@@ -18,7 +17,6 @@ import org.black_matter.monospace.world.GameWorld;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
 import java.io.IOException;
@@ -36,7 +34,6 @@ public abstract class Monospace implements EventCaller {
 	
 	@Getter private static EngineSettings engineSettings;
 	@Getter private static GameSettings gameSettings;
-	@Getter private static MouseBindings mouseBindings;
 	@Getter private static KeyBindings keyBindings;
 	@Getter private static Input input;
 	@Getter private static DeltaTimer timer;
@@ -102,7 +99,6 @@ public abstract class Monospace implements EventCaller {
 		OpenGL.setup();
 		buildAllShaders();
 		
-		mouseBindings = new MouseBindings();
 		keyBindings = new KeyBindings();
 		input = new Input();
 		timer = new DeltaTimer();
@@ -136,18 +132,17 @@ public abstract class Monospace implements EventCaller {
 		while(!GLFW.glfwWindowShouldClose(window.getHandle())) {
 			timer.start();
 			
-			keyBindings.update();
-			mouseBindings.update();
-			
 			window.begin();
 			{
+				update(timer.getDelta());
+				
 				if(world != null) {
 					GameWorld.WORLD_SHADER.bind();
 					camera.render(GameWorld.WORLD_SHADER);
+					
+					world.update(timer.getDelta());
 				}
 				
-				update(timer.getDelta());
-				if(world != null) world.update(timer.getDelta());
 				render();
 				ui();
 			}
