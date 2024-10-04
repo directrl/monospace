@@ -32,14 +32,11 @@ public class Input implements EventCaller {
 		}
 	}
 	
-	// TODO is this correct?
 	public boolean isKeyDown(int key) {
 		return GLFW.glfwGetKey(Monospace.window().getHandle(), key) == GLFW.GLFW_PRESS;
 	}
 	
 	private void keyCallback(long window, int key, int scancode, int action, int mods) {
-		if(!mouseInWindow) return;
-		
 		Monospace.keyBindings().callback(window, key, scancode, action, mods);
 	}
 	
@@ -53,8 +50,6 @@ public class Input implements EventCaller {
 	}
 	
 	private void mouseButtonCallback(long window, int button, int action, int mods) {
-		if(!mouseInWindow) return;
-		
-		Monospace.mouseBindings().callback(window, button, action, mods);
+		Monospace.keyBindings().callback(window, button, 0, action, mods);
 	}
 }
