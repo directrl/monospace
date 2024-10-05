@@ -15,6 +15,7 @@
         <module>natives-macos</module>
         <module>natives-windows</module>
         <module>monospace</module>
+        <module>monospace-tools</module>
     </modules>
 
     <properties>
