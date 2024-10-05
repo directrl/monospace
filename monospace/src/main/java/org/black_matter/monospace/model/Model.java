@@ -1,10 +1,12 @@
-package org.black_matter.monospace.render;
+package org.black_matter.monospace.model;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.black_matter.monospace.core.Monospace;
+import org.black_matter.monospace.render.Material;
+import org.black_matter.monospace.render.Mesh;
+import org.black_matter.monospace.render.Texture;
 import org.black_matter.monospace.util.Resource;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
 import java.io.Closeable;

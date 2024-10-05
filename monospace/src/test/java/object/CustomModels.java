@@ -3,7 +3,7 @@ package object;
 import org.black_matter.monospace.core.Monospace;
 import org.black_matter.monospace.render.Material;
 import org.black_matter.monospace.render.Mesh;
-import org.black_matter.monospace.render.Model;
+import org.black_matter.monospace.model.Model;
 import org.black_matter.monospace.render.Texture;
 import org.black_matter.monospace.util.Resource;
 

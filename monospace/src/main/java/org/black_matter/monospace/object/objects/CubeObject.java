@@ -2,7 +2,7 @@ package org.black_matter.monospace.object.objects;
 
 import org.black_matter.monospace.object.GameObject;
 import org.black_matter.monospace.object.components.Renderable;
-import org.black_matter.monospace.render.Model;
+import org.black_matter.monospace.model.Model;
 
 import java.util.HashMap;
 
