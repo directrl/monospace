@@ -26,20 +26,6 @@ public class Ray {
 		float y = 1.0f - (2.0f * (float) mousePosition.y) / windowDimensions.y;
 		float z = -1.0f;
 		
-		/*var normalized = new Vector3f(x, y, z);
-		var clip = new Vector4f(normalized.x, normalized.y, -1.0f, 1.0f);
-		
-		var eyePosition = clip.mul(camera.getInverseProjectionMatrix());
-		eyePosition.z = -1.0f;
-		eyePosition.w = 0.0f;
-		
-		var worldCoordinates = new Vector3f();
-		eyePosition.mul(camera.getInverseViewMatrix()).xyz(worldCoordinates);
-		worldCoordinates.normalize();
-		
-		System.out.println(worldCoordinates);
-		return null;*/
-		
 		var mouseDirection = new Vector4f(x, y, z, 1.0f);
 		
 		mouseDirection.mul(camera.getInverseProjectionMatrix());
