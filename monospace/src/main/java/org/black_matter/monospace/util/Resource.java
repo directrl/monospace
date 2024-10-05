@@ -3,9 +3,9 @@ package org.black_matter.monospace.util;
 import lombok.Getter;
 import org.black_matter.monospace.core.Monospace;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
+import java.nio.file.Files;
 
 public class Resource {
 	
@@ -35,10 +35,20 @@ public class Resource {
 	}
 	
 	public InputStream asStream() {
-		var stream = this.getClass().getResourceAsStream(path);
+		InputStream stream = null;
 		
-		if(stream == null) {
-			Monospace.LOGGER.fatal("Could not get resource stream for " + this);
+		if(type != Type.EXTERNAL) {
+			stream = this.getClass().getResourceAsStream(path);
+			
+			if(stream == null) {
+				Monospace.LOGGER.fatal("Could not get resource stream for " + this);
+			}
+		} else {
+			try {
+				stream = new FileInputStream(path);
+			} catch(FileNotFoundException e) {
+				Monospace.LOGGER.fatal("Could not get resource stream for " + this, e);
+			}
 		}
 		
 		return stream;
@@ -61,7 +71,8 @@ public class Resource {
 		LOCALISATION("i18n", ".properties"),
 		SOUND_EFFECTS("audio/sfx", ".wav"),
 		MUSIC("audio/music", ".ogg"),
-		CUSTOM("", "");
+		CUSTOM("", ""),
+		EXTERNAL("", "");
 		
 		public final String path;
 		public final String extension;
