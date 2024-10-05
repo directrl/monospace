@@ -57,7 +57,7 @@ public class Resource {
 		
 		SHADERS("shaders", ""),
 		TEXTURES("textures", ".png"),
-		MODELS("models", ".gltf"),
+		MODELS("models", ""),
 		LOCALISATION("i18n", ".properties"),
 		SOUND_EFFECTS("audio/sfx", ".wav"),
 		MUSIC("audio/music", ".ogg"),
