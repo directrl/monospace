@@ -71,6 +71,7 @@ public class Resource {
 		LOCALISATION("i18n", ".properties"),
 		SOUND_EFFECTS("audio/sfx", ".wav"),
 		MUSIC("audio/music", ".ogg"),
+		PREFABS("prefabs", ".json"),
 		CUSTOM("", ""),
 		EXTERNAL("", "");
 		

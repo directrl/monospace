@@ -10,6 +10,7 @@ import org.black_matter.monospace.model.Model;
 import org.black_matter.monospace.model.ModelLoader;
 import org.black_matter.monospace.object.GameObject;
 import org.black_matter.monospace.object.objects.ModelObject;
+import org.black_matter.monospace.object.prefab.Prefab;
 import org.black_matter.monospace.render.camera.PerspectiveCamera;
 import org.black_matter.monospace.render.gl.ShaderProgram;
 import org.black_matter.monospace.util.Ray;
@@ -52,6 +53,8 @@ public class Game extends Monospace {
 	Model untitled;
 	Model knight;
 	
+	Prefab testPrefab;
+	
 	Ray ray;
 	
 	ShaderProgram selectionShader;
@@ -86,13 +89,17 @@ public class Game extends Monospace {
 		camera = new PerspectiveCamera();
 		camera.setFov(45f);
 		
-		test = new TestObject(knight).z(-5).x(-5);
+		/*test = new TestObject(knight).z(-5).x(-5);
 		test2 = new TestObject(untitled).z(-5).x(0);
-		test3 = new TestObject(monument).z(-5).x(5);
+		test3 = new TestObject(monument).z(-5).x(5);*/
+		
+		testPrefab = new Prefab(id(), "test");
+		test = testPrefab.instantiate();
 		
 		world.getObjectManager().add(new ModelObject(untitled).z(-10));
 		world.getObjectManager().add(new ModelObject(untitled).x(-10).z(-10));
 		world.getObjectManager().add(new ModelObject(untitled).x(10).z(-10));
+		world.getObjectManager().add(test.x(10).y(10).z(-10));
 		
 		ray = new Ray(camera, world);
 		
