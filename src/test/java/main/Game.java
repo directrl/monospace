@@ -10,6 +10,7 @@ import org.black_matter.monospace.object.objects.CubeObject;
 import org.black_matter.monospace.render.camera.PerspectiveCamera;
 import org.black_matter.monospace.world.GameWorld;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL30;
 
 import java.util.Random;
 
@@ -21,8 +22,8 @@ public class Game extends Monospace {
 	public Game() {
 		super("test-game");
 		
-		engineSettings().setWindowTitle("Monospace test");
-		engineSettings().setFps(60);
+		engineSettings().window().setTitle("Monospace test");
+		//engineSettings().graphics().setTextureFilter(GL30.GL_LINEAR);
 	}
 	
 	CubeObject cube;

@@ -82,10 +82,13 @@ public class Texture implements Closeable {
 			texture.bind();
 			
 			glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, Monospace.engineSettings().graphics().getTextureFilter());
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, Monospace.engineSettings().graphics().getTextureFilter());
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-			glGenerateMipmap(GL_TEXTURE_2D);
+			
+			if(Monospace.engineSettings().graphics().isTextureMipmapping()) {
+				glGenerateMipmap(GL_TEXTURE_2D);
+			}
 			
 			return texture;
 		}

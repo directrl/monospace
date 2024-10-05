@@ -95,13 +95,13 @@ public abstract class Monospace implements EventCaller {
 	
 	public void init() {
 		window = new Window(
-			engineSettings().getWindowTitle(),
+			engineSettings.window().getTitle(),
 			new Vector2i(-1, -1),
-			new Vector2i(640, 480)
+			new Vector2i(engineSettings.window().getWidth(), engineSettings.window().getHeight())
 		);
 		imgui = new ImGuiUI(window);
 		
-		GLFW.glfwSwapInterval(gameSettings.getOptionOrDefault("vsync", true) ? 1 : 0);
+		GLFW.glfwSwapInterval(engineSettings.rendering().getVsync());
 		
 		OpenGL.setup();
 		buildAllShaders();
