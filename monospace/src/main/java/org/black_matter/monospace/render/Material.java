@@ -3,8 +3,10 @@ package org.black_matter.monospace.render;
 import lombok.Getter;
 import lombok.Setter;
 import org.black_matter.monospace.core.Monospace;
+import org.black_matter.monospace.model.Model;
 import org.black_matter.monospace.util.Resource;
 import org.joml.Vector4f;
+import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
@@ -23,7 +25,7 @@ import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
 public class Material implements Closeable {
 	
-	@Getter private final List<Mesh> meshes;
+	@Getter @Setter private List<Mesh> meshes;
 	@Getter @Setter private Texture texture;
 	@Getter @Setter private Vector4f diffuseColor;
 	
@@ -37,7 +39,11 @@ public class Material implements Closeable {
 		this.meshes = meshes;
 	}
 	
-	public static Material create(AIScene aiScene, AIMaterial aiMaterial, String textureDirectory) {
+	public Material(AIMaterial aiMaterial) {
+		this();
+	}
+	
+	public static Material createForModel(AIScene aiScene, AIMaterial aiMaterial, Model model) {
 		try(MemoryStack stack = MemoryStack.stackPush()) {
 			var material = new Material();
 			
@@ -56,13 +62,9 @@ public class Material implements Closeable {
 			
 		tex:
 			if(!texturePath.isEmpty() && !texturePath.startsWith("*")) {
-				// TODO
-				System.out.println(textureDirectory + "/" + texturePath);
-				texture = Texture.create(new Resource(
-					Resource.Type.CUSTOM,
-					texturePath,
-					"models/" + textureDirectory + "/" + texturePath
-				));
+				// TODO load external texture
+				Monospace.LOGGER.warn(texturePath);
+				assert false;
 			} else if(aiScene.mNumTextures() > 0) {
 				// if we are here, it means that the texture is embedded inside the model
 				// assimp seems to prefix embedded texture paths (ids) with *, so we need to remove that
@@ -70,7 +72,8 @@ public class Material implements Closeable {
 				texturePath = texturePath.replace("*", "");
 				
 				if(texturePath.isEmpty()) {
-					break tex;
+					texturePath = "0";
+					//break tex;
 				}
 				
 				var aiTextures = aiScene.mTextures();
@@ -81,25 +84,11 @@ public class Material implements Closeable {
 				}
 				
 				var aiTexture = AITexture.create(aiTexturePointer);
-				{
-					int id = glGenTextures();
-					
-					texture = new Texture(new Resource(
-						Resource.Type.CUSTOM,
-						textureDirectory + "/" + texturePath,
-						null
-					), id, aiTexture.mWidth(), aiTexture.mHeight());
-					texture.bind();
-					
-					glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, Monospace.engineSettings().graphics().getTextureFilter());
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, Monospace.engineSettings().graphics().getTextureFilter());
-					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture.getWidth(), texture.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, aiTexture.pcDataCompressed());
-					
-					if(Monospace.engineSettings().graphics().isTextureMipmapping()) {
-						glGenerateMipmap(GL_TEXTURE_2D);
-					}
-				}
+				texture = Texture.create(new Resource(
+					Resource.Type.CUSTOM,
+					model.getId() + "/" + texturePath,
+					null
+				), aiTexture);
 			}
 			
 		ret:

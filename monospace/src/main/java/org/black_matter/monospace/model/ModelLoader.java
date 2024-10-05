@@ -12,6 +12,7 @@ import org.lwjgl.assimp.AIMaterial;
 import org.lwjgl.assimp.AIMesh;
 import org.lwjgl.assimp.AIString;
 import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.MemoryUtil;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -24,14 +25,13 @@ import java.util.List;
 import java.util.Map;
 
 import static org.lwjgl.assimp.Assimp.*;
-import static org.lwjgl.stb.STBImage.stbi_failure_reason;
 
 public class ModelLoader {
 	
 	private ModelLoader() { }
 	
 	public static Model load(Resource modelResource, int flags) {
-		var cachedModel = Cache.get(modelResource);
+		var cachedModel = Cache.MODELS.get(modelResource.name);
 		if(cachedModel != null) return cachedModel;
 		
 		byte[] modelData;
@@ -49,6 +49,8 @@ public class ModelLoader {
 		modelBuffer.position(0);
 		
 		try(var scene = aiImportFileFromMemory(modelBuffer, flags, (CharSequence) null)) {
+			var model = new Model(modelResource.name, null);
+			
 			if(scene == null) {
 				Monospace.LOGGER.error("Could not load model",
 					new LoadingException(modelResource.getPath()));
@@ -59,16 +61,22 @@ public class ModelLoader {
 			
 			for(int i = 0; i < scene.mNumMaterials(); i++) {
 				var aiMaterial = AIMaterial.create(scene.mMaterials().get(i));
-				materials.add(Material.create(scene, aiMaterial, modelResource.getName()));
+				materials.add(Material.createForModel(scene, aiMaterial, model));
 			}
 			
 			PointerBuffer aiMeshes = scene.mMeshes();
+			List<Mesh> meshes = new ArrayList<>();
+			
+			for(int i = 0; i < scene.mNumMeshes(); i++) {
+				var aiMesh = AIMesh.create(aiMeshes.get(i));
+				var mesh = Mesh.createForModel(aiMesh, model);
+				meshes.add(mesh);
+			}
+			
 			Material defaultMaterial = new Material();
 			
 			for(int i = 0; i < scene.mNumMeshes(); i++) {
 				var aiMesh = AIMesh.create(aiMeshes.get(i));
-				var mesh = Mesh.create(aiMesh);
-				
 				int materialIndex = aiMesh.mMaterialIndex();
 				Material material;
 				
@@ -78,14 +86,17 @@ public class ModelLoader {
 					material = defaultMaterial;
 				}
 				
-				material.getMeshes().add(mesh);
+				material.setMeshes(meshes);
 			}
 			
 			if(!defaultMaterial.getMeshes().isEmpty()) {
 				materials.add(defaultMaterial);
 			}
 			
-			return new Model(modelResource.name, materials);
+			model.setMaterials(materials);
+			Monospace.LOGGER.trace("Caching model " + model);
+			Cache.MODELS.put(modelResource.name, model);
+			return model;
 		}
 	}
 	
@@ -102,26 +113,10 @@ public class ModelLoader {
 	
 	private static class Cache {
 		
-		private static final Map<String, Model> models = new HashMap<>();
-		
-		public static Model get(Resource resource) {
-			if(models.containsKey(resource.name)) {
-				return models.get(resource.name);
-			}
-			
-			return null;
-		}
-		
-		public static void set(Resource resource, Model model) {
-			models.put(resource.name, model);
-		}
-		
-		public static void remove(Resource resource) {
-			models.remove(resource.name);
-		}
+		private static final Map<String, Model> MODELS = new HashMap<>();
 		
 		public static void close() {
-			models.values().forEach(Model::close);
+			MODELS.values().forEach(Model::close);
 		}
 	}
 	

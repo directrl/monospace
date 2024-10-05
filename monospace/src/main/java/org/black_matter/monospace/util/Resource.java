@@ -50,7 +50,7 @@ public class Resource {
 	
 	@Override
 	public String toString() {
-		return String.format("Resource[type=%s, path=%s]", type.name(), path);
+		return String.format("Resource{type=%s, path=%s}", type.name(), path);
 	}
 	
 	public enum Type {

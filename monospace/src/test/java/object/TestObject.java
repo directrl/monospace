@@ -16,7 +16,6 @@ public class TestObject extends GameObject implements Renderable {
 	
 	public TestObject(Model model) {
 		super(COMPONENTS);
-		if(model == null) model = Model.Registry.MODELS.get("test");
 		this.model = model;
 	}
 	

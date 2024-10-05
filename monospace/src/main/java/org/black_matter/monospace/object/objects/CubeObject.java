@@ -12,7 +12,7 @@ public class CubeObject extends GameObject implements Renderable {
 		put(Renderable.class, (Renderable<CubeObject>) o -> o.render(o));
 	}};
 	
-	private static final Model MODEL = Model.Registry.MODELS.get("cube");
+	private static final Model MODEL = null; // TODO
 	
 	public CubeObject() { super(COMPONENTS); }
 	

@@ -1,6 +1,7 @@
 package org.black_matter.monospace.render;
 
 import lombok.Getter;
+import org.black_matter.monospace.model.Model;
 import org.lwjgl.assimp.AIFace;
 import org.lwjgl.assimp.AIMesh;
 import org.lwjgl.assimp.AIVector3D;
@@ -71,7 +72,7 @@ public class Mesh implements Closeable {
 		glBindVertexArray(0);
 	}
 	
-	public static Mesh create(AIMesh mesh) {
+	public static Mesh createForModel(AIMesh mesh, Model model) {
 		// vertices
 		AIVector3D.Buffer buffer = mesh.mVertices();
 		float[] vertices = new float[buffer.remaining() * 3];
