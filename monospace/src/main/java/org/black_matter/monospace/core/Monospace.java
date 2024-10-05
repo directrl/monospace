@@ -121,7 +121,7 @@ public abstract class Monospace implements EventCaller {
 	
 	public void ui() {
 		imgui().begin();
-		DebugUI.render();
+		if(debug) DebugUI.render();
 		imgui().end();
 	}
 	
