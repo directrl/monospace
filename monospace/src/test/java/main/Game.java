@@ -93,7 +93,7 @@ public class Game extends Monospace {
 		test2 = new TestObject(untitled).z(-5).x(0);
 		test3 = new TestObject(monument).z(-5).x(5);*/
 		
-		testPrefab = new Prefab(id(), "test");
+		testPrefab = Prefab.from(id(), "test");
 		test = testPrefab.instantiate();
 		
 		world.getObjectManager().add(new ModelObject(untitled).z(-10));
