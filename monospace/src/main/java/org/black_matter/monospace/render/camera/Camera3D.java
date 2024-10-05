@@ -24,7 +24,9 @@ public abstract class Camera3D implements EventCaller {
 	private Vector3f up;
 	
 	@Getter protected Matrix4f projectionMatrix;
+	@Getter protected Matrix4f inverseProjectionMatrix;
 	@Getter private Matrix4f viewMatrix;
+	@Getter private Matrix4f inverseViewMatrix;
 	
 	@Getter @Setter private float fov = 1;
 	
@@ -37,7 +39,9 @@ public abstract class Camera3D implements EventCaller {
 		this.up = new Vector3f();
 		this.position = new Vector3f();
 		this.projectionMatrix = new Matrix4f();
+		this.inverseProjectionMatrix = new Matrix4f();
 		this.viewMatrix = new Matrix4f();
+		this.inverseViewMatrix = new Matrix4f();
 		this.rotation = new Vector2f();
 		
 		this.width = Monospace.window().getDimensions().x;
@@ -114,5 +118,7 @@ public abstract class Camera3D implements EventCaller {
 			.rotateX(rotation.x)
 			.rotateY(rotation.y)
 			.translate(-position.x, -position.y, -position.z);
+		
+		inverseViewMatrix.set(viewMatrix).invert();
 	}
 }

@@ -1,6 +1,7 @@
 package org.black_matter.monospace.world;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.black_matter.monospace.object.GameObject;
 import org.black_matter.monospace.object.GameObjectManager;
 import org.black_matter.monospace.object.components.Renderable;
@@ -13,7 +14,6 @@ public class GameWorld {
 	public static final ShaderProgram WORLD_SHADER = ShaderProgram.Registry.get("world");
 	
 	@Getter private final GameObjectManager objectManager = new GameObjectManager(this);
-	
 	@Getter private boolean loaded = false;
 	
 	public void load() {

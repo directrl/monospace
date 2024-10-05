@@ -9,9 +9,13 @@ import org.black_matter.monospace.model.ModelLoader;
 import org.black_matter.monospace.object.GameObject;
 import org.black_matter.monospace.object.objects.ModelObject;
 import org.black_matter.monospace.render.camera.PerspectiveCamera;
+import org.black_matter.monospace.render.gl.Shader;
+import org.black_matter.monospace.render.gl.ShaderProgram;
+import org.black_matter.monospace.util.Ray;
 import org.black_matter.monospace.util.Resource;
 import org.black_matter.monospace.world.GameWorld;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL30;
 
 import java.util.Random;
 
@@ -40,15 +44,24 @@ public class Game extends Monospace {
 	KeyBinding cameraDown;
 	KeyBinding cameraMove;
 	
+	KeyBinding objectPick;
+	
 	float mouseSensitivity;
 	
 	Model monument;
 	Model untitled;
 	Model knight;
 	
+	Ray ray;
+	
+	ShaderProgram selectionShader;
+	GameObject selectedObject;
+	
 	@Override
 	public void init() {
 		super.init();
+		
+		selectionShader = ShaderProgram.Registry.get("selection");
 		
 		//monument = ModelLoader.load(gameResources().get(Resource.Type.MODELS, "monument.obj"));
 		untitled = ModelLoader.load(gameResources().get(Resource.Type.MODELS, "Untitled.gltf"));
@@ -65,6 +78,8 @@ public class Game extends Monospace {
 		
 		cameraMove = keyBindings().registerBinding(new KeyBinding("cameraMove", GLFW.GLFW_MOUSE_BUTTON_RIGHT, 0));
 		
+		objectPick = keyBindings().registerBinding(new KeyBinding("objectPick", GLFW.GLFW_MOUSE_BUTTON_LEFT, 0));
+		
 		world = new GameWorld();
 		world.load();
 		
@@ -75,12 +90,11 @@ public class Game extends Monospace {
 		test2 = new TestObject(untitled).z(-5).x(0);
 		test3 = new TestObject(monument).z(-5).x(5);
 		
-		model = (ModelObject) new ModelObject(untitled).z(-10);
+		world.getObjectManager().add(new ModelObject(untitled).z(-10));
+		world.getObjectManager().add(new ModelObject(untitled).x(-10).z(-10));
+		world.getObjectManager().add(new ModelObject(untitled).x(10).z(-10));
 		
-		world.getObjectManager().add(model);
-		world.getObjectManager().add(test);
-		world.getObjectManager().add(test2);
-		world.getObjectManager().add(test3);
+		ray = new Ray(camera, world);
 		
 		onEvent(MouseMoveEvent.class, Game.input(), e -> {
 			if(cameraMove.isDown()) {
@@ -90,6 +104,8 @@ public class Game extends Monospace {
 				);
 				Game.camera().computeViewMatrix();
 			}
+			
+			selectedObject = ray.getHitObject();
 		});
 		
 		window().show();
@@ -120,10 +136,21 @@ public class Game extends Monospace {
 			cameraMoveVector[4],
 			cameraMoveVector[5]
 		);
+		
+		if(objectPick.wasPressed()) {
+			var o = ray.getHitObject();
+			
+			if(o != null) {
+				System.out.println("hit object! " + o);
+				//o.rotate(0, 0, 0, (float) Math.toRadians(15));
+				//o.scale(2);
+			}
+		}
 	}
 	
 	@Override
 	public void render() {
+		//GameWorld.WORLD_SHADER.getUniforms().load("selection", selectedObject == null ? 0 : 1);
 		super.render();
 	}
 	

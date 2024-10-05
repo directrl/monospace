@@ -12,5 +12,7 @@ public class OrthographicCamera extends Camera3D {
 			Z_NEAR,
 			Z_FAR
 		);
+		
+		this.inverseProjectionMatrix.set(this.projectionMatrix).invert();
 	}
 }

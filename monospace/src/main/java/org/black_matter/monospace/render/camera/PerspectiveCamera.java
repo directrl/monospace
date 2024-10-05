@@ -10,5 +10,7 @@ public class PerspectiveCamera extends Camera3D {
 			Z_NEAR,
 			Z_FAR
 		);
+		
+		this.inverseProjectionMatrix.set(this.projectionMatrix).invert();
 	}
 }
