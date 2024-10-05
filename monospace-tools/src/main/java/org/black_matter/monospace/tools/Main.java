@@ -2,13 +2,16 @@ package org.black_matter.monospace.tools;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+import org.black_matter.monospace.tools.worldeditor.WorldEditor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
 	
-	private static final List<String> AVAILABLE_TOOLS = new ArrayList<>();
+	private static final List<String> AVAILABLE_TOOLS = new ArrayList<>() {{
+		add("worldeditor");
+	}};
 	
 	@Parameter(names={ "--tool", "-t" }) String tool = "";
 	
@@ -33,6 +36,8 @@ public class Main {
 		}
 		
 		switch(tool) {
+			case "worldeditor":
+				new WorldEditor().launch();
 			default:
 				throw new RuntimeException("Tool not implemented: " + tool);
 		}
