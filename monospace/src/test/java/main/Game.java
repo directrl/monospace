@@ -3,6 +3,7 @@ package main;
 import object.TestObject;
 import org.black_matter.monospace.core.Monospace;
 import org.black_matter.monospace.events.input.MouseMoveEvent;
+import org.black_matter.monospace.events.render.gl.ShaderPassPre;
 import org.black_matter.monospace.input.KeyBinding;
 import org.black_matter.monospace.model.Model;
 import org.black_matter.monospace.model.ModelLoader;
@@ -108,6 +109,16 @@ public class Game extends Monospace {
 			selectedObject = ray.getHitObject();
 		});
 		
+		onEvent(ShaderPassPre.class, world, e -> {
+			if(e.program().getId() == GameWorld.WORLD_SHADER.getId()) {
+				if(e.parameter().equals(selectedObject)) {
+					e.program().getUniforms().load("selection", 1);
+				} else {
+					e.program().getUniforms().load("selection", 0);
+				}
+			}
+		});
+		
 		window().show();
 	}
 	
@@ -150,7 +161,6 @@ public class Game extends Monospace {
 	
 	@Override
 	public void render() {
-		//GameWorld.WORLD_SHADER.getUniforms().load("selection", selectedObject == null ? 0 : 1);
 		super.render();
 	}
 	
