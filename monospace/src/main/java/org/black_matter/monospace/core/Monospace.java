@@ -8,6 +8,7 @@ import org.black_matter.monospace.event.EventCaller;
 import org.black_matter.monospace.input.Input;
 import org.black_matter.monospace.input.KeyBindings;
 import org.black_matter.monospace.render.camera.Camera3D;
+import org.black_matter.monospace.render.gl.OpenGL;
 import org.black_matter.monospace.render.gl.Shader;
 import org.black_matter.monospace.render.gl.ShaderProgram;
 import org.black_matter.monospace.ui.DebugUI;

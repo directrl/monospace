@@ -1,4 +1,4 @@
-package org.black_matter.monospace.core;
+package org.black_matter.monospace.render.gl;
 
 import static org.lwjgl.opengl.GL11.*;
 

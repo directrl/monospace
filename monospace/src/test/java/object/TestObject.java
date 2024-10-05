@@ -21,6 +21,6 @@ public class TestObject extends GameObject implements Renderable {
 	
 	@Override
 	public void render(GameObject o) {
-		model.render();
+		if(model != null) model.render();
 	}
 }

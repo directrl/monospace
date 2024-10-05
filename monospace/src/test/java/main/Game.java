@@ -50,9 +50,9 @@ public class Game extends Monospace {
 	public void init() {
 		super.init();
 		
-		monument = ModelLoader.load(gameResources().get(Resource.Type.MODELS, "monument.obj"));
+		//monument = ModelLoader.load(gameResources().get(Resource.Type.MODELS, "monument.obj"));
 		untitled = ModelLoader.load(gameResources().get(Resource.Type.MODELS, "Untitled.gltf"));
-		knight = ModelLoader.load(gameResources().get(Resource.Type.MODELS, "knight/chr_knight.obj"));
+		//knight = ModelLoader.load(gameResources().get(Resource.Type.MODELS, "knight/chr_knight.obj"));
 		
 		mouseSensitivity = Game.gameSettings().getOptionOrDefault("mouseSensitivity", 0.5f);
 		
