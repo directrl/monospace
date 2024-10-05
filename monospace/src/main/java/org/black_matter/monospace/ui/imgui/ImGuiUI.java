@@ -14,7 +14,7 @@ public class ImGuiUI {
 	private final ImGuiIO imIo;
 	
 	private final ImGuiImplGl3 imGl3;
-	private final ImGuiImplGlfwMulti imGlfw;
+	public final ImGuiImplGlfwMulti imGlfw;
 	
 	public ImGuiUI(Window window) {
 		imCtx = ImGui.createContext();

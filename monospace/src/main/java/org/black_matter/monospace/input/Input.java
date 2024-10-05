@@ -37,12 +37,14 @@ public class Input implements EventCaller {
 	}
 	
 	private void keyCallback(long window, int key, int scancode, int action, int mods) {
+		Monospace.imgui().imGlfw.keyCallback(window, key, scancode, action, mods);
 		Monospace.keyBindings().callback(window, key, scancode, action, mods);
 	}
 	
 	private void cursorPosCallback(long window, double x, double y) {
 		if(!mouseInWindow) return;
 		
+		Monospace.imgui().imGlfw.cursorPosCallback(window, x, y);
 		callEvent(MouseMoveEvent.class, this, new MouseMoveEvent(x, y, x - lastCursorX, y - lastCursorY));
 		
 		lastCursorX = x;
@@ -50,6 +52,7 @@ public class Input implements EventCaller {
 	}
 	
 	private void mouseButtonCallback(long window, int button, int action, int mods) {
+		Monospace.imgui().imGlfw.mouseButtonCallback(window, button, action, mods);
 		Monospace.keyBindings().callback(window, button, 0, action, mods);
 	}
 }
