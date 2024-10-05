@@ -111,13 +111,7 @@ public class CustomModels {
 			4, 6, 7, 5, 4, 7,
 		};
 		
-		Texture texture;
-		
-		try {
-			texture = Texture.create(Monospace.gameResources().get(Resource.Type.TEXTURES, "test"));
-		} catch(Texture.LoadingException e) {
-			throw new RuntimeException(e);
-		}
+		var texture = Texture.create(Monospace.gameResources().get(Resource.Type.TEXTURES, "test"));
 		
 		List<Mesh> meshes = new ArrayList<>();
 		meshes.add(new Mesh(positions, texCoords, indices));

@@ -1,6 +1,7 @@
 package org.black_matter.monospace.render;
 
 import lombok.Getter;
+import org.black_matter.monospace.core.Monospace;
 import org.black_matter.monospace.util.Resource;
 import org.lwjgl.system.MemoryStack;
 
@@ -18,11 +19,15 @@ import static org.lwjgl.stb.STBImage.*;
 
 public class Texture implements Closeable {
 	
-	public static final Resource DEFAULT_TEXTURE = new Resource(
-		Resource.Type.TEXTURES,
-		"missingno",
-		"/assets/monospace/textures/default.png"
-	);
+	public static final Texture DEFAULT_TEXTURE;
+	
+	static {
+		DEFAULT_TEXTURE = Texture.create(new Resource(
+			Resource.Type.TEXTURES,
+			"missingno",
+			"/assets/monospace/textures/default.png"
+		));
+	}
 	
 	@Getter private final Resource resource;
 	
@@ -37,12 +42,21 @@ public class Texture implements Closeable {
 		this.height = height;
 	}
 	
-	public static Texture create(Resource resource) throws LoadingException {
+	public static Texture create(Resource resource) {
 		var cachedTexture = Cache.get(resource);
 		if(cachedTexture != null) return cachedTexture;
 		
-		var texData = resource.readAllBytes();
-		ByteBuffer texBuffer = ByteBuffer.allocateDirect(texData.length).order(ByteOrder.nativeOrder());
+		byte[] texData;
+		
+		try {
+			texData = resource.readAllBytes();
+		} catch(Exception e) {
+			Monospace.LOGGER.error("Could not load texture",
+				new LoadingException(resource.getPath()));
+			return DEFAULT_TEXTURE;
+		}
+		
+		var texBuffer = ByteBuffer.allocateDirect(texData.length).order(ByteOrder.nativeOrder());
 		texBuffer.put(texData);
 		texBuffer.position(0);
 		
@@ -54,7 +68,9 @@ public class Texture implements Closeable {
 			var image = stbi_load_from_memory(texBuffer, wBuffer, hBuffer, channels, 4);
 			
 			if(image == null) {
-				throw new LoadingException(resource.getPath());
+				Monospace.LOGGER.error("Could not load texture",
+					new LoadingException(resource.getPath()));
+				return DEFAULT_TEXTURE;
 			}
 			
 			int width = wBuffer.get();
@@ -82,20 +98,12 @@ public class Texture implements Closeable {
 	@Override
 	public void close() {
 		glDeleteTextures(id);
+		Cache.remove(resource);
 	}
 	
-	public static class Cache {
+	private static class Cache {
 		
 		private static final Map<String, Texture> textures = new HashMap<>();
-		
-		static {
-			try {
-				Texture.create(DEFAULT_TEXTURE);
-			} catch(LoadingException e) {
-				e.printStackTrace();
-				System.exit(1);
-			}
-		}
 		
 		public static Texture get(Resource resource) {
 			if(textures.containsKey(resource.name)) {
@@ -106,7 +114,7 @@ public class Texture implements Closeable {
 		}
 		
 		public static void set(Resource resource, Texture texture) {
-			if(resource.name.equals(DEFAULT_TEXTURE.name)) {
+			if(resource.name.equals(DEFAULT_TEXTURE.resource.getName())) {
 				throw new InvalidParameterException("Cannot change the default texture");
 			}
 			

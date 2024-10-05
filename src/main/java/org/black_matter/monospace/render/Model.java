@@ -140,13 +140,7 @@ public class Model implements Closeable {
 				4, 6, 7, 5, 4, 7,
 			};
 			
-			Texture texture;
-			
-			try {
-				texture = Texture.create(Monospace.engineResources().get(Resource.Type.TEXTURES, "cube"));
-			} catch(Texture.LoadingException e) {
-				throw new RuntimeException(e);
-			}
+			var texture = Texture.create(Monospace.engineResources().get(Resource.Type.TEXTURES, "cube"));
 			
 			List<Mesh> meshes = new ArrayList<>();
 			meshes.add(new Mesh(positions, texCoords, indices));
