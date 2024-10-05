@@ -3,20 +3,18 @@ package main;
 import object.TestObject;
 import org.black_matter.monospace.core.Monospace;
 import org.black_matter.monospace.events.input.MouseMoveEvent;
-import org.black_matter.monospace.events.render.gl.ShaderPassPre;
+import org.black_matter.monospace.events.render.gl.ShaderPassPreEvent;
 import org.black_matter.monospace.input.KeyBinding;
 import org.black_matter.monospace.model.Model;
 import org.black_matter.monospace.model.ModelLoader;
 import org.black_matter.monospace.object.GameObject;
 import org.black_matter.monospace.object.objects.ModelObject;
 import org.black_matter.monospace.render.camera.PerspectiveCamera;
-import org.black_matter.monospace.render.gl.Shader;
 import org.black_matter.monospace.render.gl.ShaderProgram;
 import org.black_matter.monospace.util.Ray;
 import org.black_matter.monospace.util.Resource;
 import org.black_matter.monospace.world.GameWorld;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL30;
 
 import java.util.Random;
 
@@ -109,7 +107,7 @@ public class Game extends Monospace {
 			selectedObject = ray.getHitObject();
 		});
 		
-		onEvent(ShaderPassPre.class, world, e -> {
+		onEvent(ShaderPassPreEvent.class, world, e -> {
 			if(e.program().getId() == GameWorld.WORLD_SHADER.getId()) {
 				if(e.parameter().equals(selectedObject)) {
 					e.program().getUniforms().load("selection", 1);
