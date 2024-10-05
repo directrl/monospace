@@ -1,6 +1,7 @@
 package org.black_matter.monospace.model;
 
 import org.black_matter.monospace.core.Monospace;
+import org.black_matter.monospace.object.collision.AABB;
 import org.black_matter.monospace.render.Material;
 import org.black_matter.monospace.render.Mesh;
 import org.black_matter.monospace.render.Texture;
@@ -49,7 +50,7 @@ public class ModelLoader {
 		modelBuffer.position(0);
 		
 		try(var scene = aiImportFileFromMemory(modelBuffer, flags, (CharSequence) null)) {
-			var model = new Model(modelResource.name, null);
+			var model = new Model(modelResource.name, null, null);
 			
 			if(scene == null) {
 				Monospace.LOGGER.error("Could not load model",
@@ -66,11 +67,19 @@ public class ModelLoader {
 			
 			PointerBuffer aiMeshes = scene.mMeshes();
 			List<Mesh> meshes = new ArrayList<>();
+			List<AABB> aabbs = new ArrayList<>();
 			
 			for(int i = 0; i < scene.mNumMeshes(); i++) {
 				var aiMesh = AIMesh.create(aiMeshes.get(i));
 				var mesh = Mesh.createForModel(aiMesh, model);
 				meshes.add(mesh);
+				
+				var aiAabb = aiMesh.mAABB();
+				var aabb = new AABB(
+					aiAabb.mMin().x(), aiAabb.mMin().y(), aiAabb.mMin().z(),
+					aiAabb.mMax().x(), aiAabb.mMax().y(), aiAabb.mMax().z()
+				);
+				aabbs.add(aabb);
 			}
 			
 			Material defaultMaterial = new Material();
@@ -93,7 +102,9 @@ public class ModelLoader {
 				materials.add(defaultMaterial);
 			}
 			
-			model.setMaterials(materials);
+			model.materials = materials;
+			model.aabb = aabbs;
+			
 			Monospace.LOGGER.trace("Caching model " + model);
 			Cache.MODELS.put(modelResource.name, model);
 			return model;
@@ -108,7 +119,8 @@ public class ModelLoader {
 			| aiProcess_FixInfacingNormals
 			| aiProcess_CalcTangentSpace
 			| aiProcess_LimitBoneWeights
-			| aiProcess_PreTransformVertices);
+			| aiProcess_PreTransformVertices
+			| aiProcess_GenBoundingBoxes);
 	}
 	
 	private static class Cache {

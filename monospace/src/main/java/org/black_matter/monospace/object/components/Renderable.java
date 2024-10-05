@@ -10,6 +10,6 @@ public interface Renderable<T extends GameObject> extends GameObject.Component {
 	void render(T o);
 	
 	default void computeRenderMatrix(T o) {
-		renderMatrix.translationRotateScale(o.position, o.rotation, o.scale);
+		renderMatrix.translationRotateScale(o.position(), o.rotation(), o.scale());
 	}
 }

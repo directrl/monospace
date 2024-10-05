@@ -4,12 +4,14 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import org.black_matter.monospace.core.Monospace;
+import org.black_matter.monospace.object.collision.AABB;
 import org.black_matter.monospace.render.Material;
 import org.black_matter.monospace.render.Mesh;
 import org.black_matter.monospace.render.Texture;
 import org.black_matter.monospace.render.gl.ShaderProgram;
 import org.black_matter.monospace.util.Resource;
 import org.black_matter.monospace.world.GameWorld;
+import org.lwjgl.assimp.AIAABB;
 import org.lwjgl.opengl.GL30;
 
 import java.io.Closeable;
@@ -21,11 +23,13 @@ import java.util.Map;
 public class Model implements Closeable {
 	
 	@Getter private final String id;
-	@Getter @Setter private List<Material> materials;
+	@Getter protected List<Material> materials;
+	@Getter protected List<AABB> aabb;
 	
-	public Model(String id, List<Material> materials) {
+	public Model(String id, List<Material> materials, List<AABB> aabb) {
 		this.id = id;
 		this.materials = materials;
+		this.aabb = aabb;
 	}
 	
 	public void render() {

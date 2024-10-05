@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.black_matter.monospace.object.collision.AABB;
 import org.black_matter.monospace.util.ListHashMap;
 import org.black_matter.monospace.world.GameWorld;
 import org.joml.Matrix4f;
@@ -14,16 +15,16 @@ import java.util.*;
 
 public abstract class GameObject {
 	
-	private final HashMap<Class<? extends Component>, Component>  components;
+	private final HashMap<Class<? extends Component>, Component> components;
 	
-	@Getter @Setter(AccessLevel.PACKAGE) private long id;
-	@Getter @Setter private GameWorld world;
+	@Getter @Setter(AccessLevel.PACKAGE) protected long id;
+	@Getter @Setter protected GameWorld world;
 	
-	public Vector3f position = new Vector3f();
-	public Quaternionf rotation = new Quaternionf();
+	protected Vector3f position = new Vector3f();
+	protected Quaternionf rotation = new Quaternionf();
+	protected List<AABB> aabb = new ArrayList<>();
 	
-	@Accessors(fluent = true)
-	@Getter @Setter public float scale = 1;
+	protected float scale = 1;
 	
 	public GameObject(HashMap<Class<? extends Component>, Component> components) {
 		this.components = components;
@@ -52,6 +53,9 @@ public abstract class GameObject {
 	public GameObject y(float y) { position.y = y; return this; }
 	public GameObject z(float z) { position.z = z; return this; }
 	
+	public Vector3f position() { return position; }
+	public GameObject position(Vector3f position) { this.position = position; return this; }
+	
 	public Quaternionf rotation() { return rotation; }
 	public GameObject rotation(Quaternionf rotation) { this.rotation = rotation; return this; }
 	
@@ -70,6 +74,11 @@ public abstract class GameObject {
 		
 		return this;
 	}
+	
+	public List<AABB> aabb() { return Collections.unmodifiableList(this.aabb); }
+	
+	public float scale() { return this.scale; }
+	public GameObject scale(float scale) { this.scale = scale; return this; }
 	
 	@Override
 	public boolean equals(Object obj) {
