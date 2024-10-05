@@ -4,7 +4,6 @@ import org.black_matter.monospace.util.ListHashMap;
 
 import java.util.*;
 
-// TODO global events?
 public interface EventCaller {
 	
 	Map<Class<?>, Map<Object, EventCallback>> eventListeners = new HashMap<>();
@@ -27,7 +26,7 @@ public interface EventCaller {
 			//Engine.LOGGER.trace(STR."Calling event [\{cls.getSimpleName()}] for \{callbacks.size()} listener(s)");
 			
 			callbacks.forEach((o, callback) -> {
-				if(inst.equals(o)) {
+				if((inst == null && o == null) || inst.equals(o)) {
 					callback.execute(event);
 				}
 			});

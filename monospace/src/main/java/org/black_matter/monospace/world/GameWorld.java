@@ -1,9 +1,12 @@
 package org.black_matter.monospace.world;
 
 import lombok.Getter;
+import org.black_matter.monospace.core.Monospace;
 import org.black_matter.monospace.event.EventCaller;
 import org.black_matter.monospace.events.render.gl.ShaderPassPostEvent;
 import org.black_matter.monospace.events.render.gl.ShaderPassPreEvent;
+import org.black_matter.monospace.events.world.WorldLoadEvent;
+import org.black_matter.monospace.events.world.WorldUnloadEvent;
 import org.black_matter.monospace.object.GameObjectManager;
 import org.black_matter.monospace.object.components.Renderable;
 import org.black_matter.monospace.object.components.Tickable;
@@ -17,10 +20,12 @@ public class GameWorld implements EventCaller {
 	@Getter private boolean loaded = false;
 	
 	public void load() {
+		callEvent(WorldLoadEvent.class, null, new WorldLoadEvent(this));
 		loaded = true;
 	}
 	
 	public void unload() {
+		callEvent(WorldUnloadEvent.class, null, new WorldUnloadEvent(this));
 		loaded = false;
 	}
 	

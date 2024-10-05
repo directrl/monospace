@@ -4,6 +4,7 @@ import object.TestObject;
 import org.black_matter.monospace.core.Monospace;
 import org.black_matter.monospace.events.input.MouseMoveEvent;
 import org.black_matter.monospace.events.render.gl.ShaderPassPreEvent;
+import org.black_matter.monospace.events.world.WorldLoadEvent;
 import org.black_matter.monospace.input.KeyBinding;
 import org.black_matter.monospace.model.Model;
 import org.black_matter.monospace.model.ModelLoader;
@@ -107,16 +108,21 @@ public class Game extends Monospace {
 			selectedObject = ray.getHitObject();
 		});
 		
-		onEvent(ShaderPassPreEvent.class, world, e -> {
-			if(e.program().getId() == GameWorld.WORLD_SHADER.getId()) {
-				if(e.parameter().equals(selectedObject)) {
-					e.program().getUniforms().load("selection", 1);
-				} else {
-					e.program().getUniforms().load("selection", 0);
+		onEvent(WorldLoadEvent.class, null, e -> {
+			System.out.println("aaa");
+			
+			onEvent(ShaderPassPreEvent.class, e.world(), e1 -> {
+				if(e1.program().getId() == GameWorld.WORLD_SHADER.getId()) {
+					if(e1.parameter().equals(selectedObject)) {
+						e1.program().getUniforms().load("selection", 1);
+					} else {
+						e1.program().getUniforms().load("selection", 0);
+					}
 				}
-			}
+			});
 		});
 		
+		world.load();
 		window().show();
 	}
 	

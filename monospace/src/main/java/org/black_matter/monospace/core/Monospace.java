@@ -40,6 +40,7 @@ public abstract class Monospace implements EventCaller {
 	@Getter private static Input input;
 	@Getter private static DeltaTimer timer;
 	
+	
 	@Getter private static Resources engineResources;
 	@Getter private static Resources gameResources;
 	
@@ -125,6 +126,11 @@ public abstract class Monospace implements EventCaller {
 	}
 	
 	protected void shutdown() {
+		if(world != null) {
+			LOGGER.info("Unloading world");
+			world.unload();
+		}
+		
 		LOGGER.info("Saving game settings");
 		
 		try {
