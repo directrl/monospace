@@ -18,4 +18,8 @@ public class FileDialogs {
 			return tinyfd_openFileDialog("Open file...", null, filterBuffer, filterDescription, false);
 		}
 	}
+	
+	public static String selectFolderDialog() {
+		return tinyfd_selectFolderDialog("Select folder...", null);
+	}
 }

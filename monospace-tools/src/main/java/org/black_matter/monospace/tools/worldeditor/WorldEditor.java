@@ -3,11 +3,13 @@ package org.black_matter.monospace.tools.worldeditor;
 import imgui.ImGui;
 import org.black_matter.monospace.core.Monospace;
 import org.black_matter.monospace.render.camera.PerspectiveCamera;
+import org.black_matter.monospace.tools.worldeditor.objects.CoordinateGrid;
+import org.black_matter.monospace.tools.worldeditor.ui.ObjectEditor;
+import org.black_matter.monospace.tools.worldeditor.ui.PrefabCollection;
 import org.black_matter.monospace.tools.worldeditor.keybindings.CameraMovement;
 import org.black_matter.monospace.tools.worldeditor.keybindings.EditorShortcuts;
 import org.black_matter.monospace.tools.worldeditor.world.WorkspaceWorld;
 import org.black_matter.monospace.ui.DebugUI;
-import org.black_matter.monospace.world.GameWorld;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
@@ -15,6 +17,11 @@ public class WorldEditor extends Monospace {
 	
 	private static CameraMovement cameraMovement;
 	private static EditorShortcuts editorShortcuts;
+	
+	private static PrefabCollection prefabCollection;
+	private static ObjectEditor objectEditor;
+	
+	private static CoordinateGrid coordinateGrid;
 	
 	public WorldEditor() {
 		super("monospace-worldeditor");
@@ -32,8 +39,14 @@ public class WorldEditor extends Monospace {
 		cameraMovement = new CameraMovement();
 		editorShortcuts = new EditorShortcuts();
 		
+		objectEditor = new ObjectEditor();
+		
+		coordinateGrid = new CoordinateGrid(20, 1.0f);
+		
 		world = new WorkspaceWorld();
 		world.load();
+		
+		world.getObjectManager().add(coordinateGrid);
 		
 		window().show();
 	}
@@ -44,6 +57,19 @@ public class WorldEditor extends Monospace {
 		
 		cameraMovement.update(delta);
 		editorShortcuts.update(delta);
+		
+		var gridPos = new Vector3f(camera.getPosition());
+		gridPos.x -= coordinateGrid.getSize() / 2;
+		gridPos.y = 0;
+		gridPos.z -= coordinateGrid.getSize() / 2;
+		gridPos.round();
+		
+		coordinateGrid.position(gridPos);
+	}
+	
+	@Override
+	public void render() {
+		super.render();
 	}
 	
 	@Override
@@ -91,8 +117,22 @@ public class WorldEditor extends Monospace {
 				
 				ImGui.endMenu();
 			}
+			
+			if(ImGui.beginMenu("Assets")) {
+				if(ImGui.menuItem("Set external assets directory...")) {
+					var assetsDirectory = FileDialogs.selectFolderDialog();
+					prefabCollection = new PrefabCollection(assetsDirectory);
+				}
+				
+				ImGui.endMenu();
+			}
+			
 			ImGui.endMainMenuBar();
 		}
+		
+		if(prefabCollection != null) prefabCollection.ui();
+		if(objectEditor != null) objectEditor.ui(prefabCollection);
+		
 		imgui().end();
 	}
 	
