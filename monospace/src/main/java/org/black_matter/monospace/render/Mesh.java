@@ -6,6 +6,7 @@ import org.lwjgl.assimp.AIMesh;
 import org.lwjgl.assimp.AIVector3D;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.MemoryUtil;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -15,6 +16,8 @@ import java.util.List;
 import java.nio.*;
 
 import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.system.MemoryUtil.memCallocFloat;
+import static org.lwjgl.system.MemoryUtil.memCallocInt;
 
 public class Mesh implements Closeable {
 	
@@ -24,50 +27,48 @@ public class Mesh implements Closeable {
 	@Getter private int vaoId;
 	
 	public Mesh(float[] positions, float[] texCoords, int[] indices) {
-		try(MemoryStack stack = MemoryStack.stackPush()) {
-			this.vertexCount = indices.length;
-			
-			vaoId = glGenVertexArrays();
-			glBindVertexArray(vaoId);
-			
-			// positions
-			var vboId = glGenBuffers();
-			vboIds.add(vboId);
-			
-			FloatBuffer positionsBuffer = stack.callocFloat(positions.length);
-			positionsBuffer.put(0, positions);
-			
-			glBindBuffer(GL_ARRAY_BUFFER, vboId);
-			glBufferData(GL_ARRAY_BUFFER, positionsBuffer, GL_STATIC_DRAW);
-			
-			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
-			
-			// texture coordinates
-			vboId = glGenBuffers();
-			vboIds.add(vboId);
-			
-			FloatBuffer texCoordsBuffer = stack.callocFloat(texCoords.length);
-			texCoordsBuffer.put(0, texCoords);
-			
-			glBindBuffer(GL_ARRAY_BUFFER, vboId);
-			glBufferData(GL_ARRAY_BUFFER, texCoordsBuffer, GL_STATIC_DRAW);
-			glEnableVertexAttribArray(1);
-			glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
-			
-			// indices
-			vboId = glGenBuffers();
-			vboIds.add(vboId);
-			
-			IntBuffer indicesBuffer = stack.callocInt(indices.length);
-			indicesBuffer.put(0, indices);
-			
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboId);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL_STATIC_DRAW);
-			
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-			glBindVertexArray(0);
-		}
+		this.vertexCount = indices.length;
+		
+		vaoId = glGenVertexArrays();
+		glBindVertexArray(vaoId);
+		
+		// positions
+		var vboId = glGenBuffers();
+		vboIds.add(vboId);
+		
+		FloatBuffer positionsBuffer = memCallocFloat(positions.length);
+		positionsBuffer.put(0, positions);
+		
+		glBindBuffer(GL_ARRAY_BUFFER, vboId);
+		glBufferData(GL_ARRAY_BUFFER, positionsBuffer, GL_STATIC_DRAW);
+		
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
+		
+		// texture coordinates
+		vboId = glGenBuffers();
+		vboIds.add(vboId);
+		
+		FloatBuffer texCoordsBuffer = memCallocFloat(texCoords.length);
+		texCoordsBuffer.put(0, texCoords);
+		
+		glBindBuffer(GL_ARRAY_BUFFER, vboId);
+		glBufferData(GL_ARRAY_BUFFER, texCoordsBuffer, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
+		
+		// indices
+		vboId = glGenBuffers();
+		vboIds.add(vboId);
+		
+		IntBuffer indicesBuffer = memCallocInt(indices.length);
+		indicesBuffer.put(0, indices);
+		
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboId);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL_STATIC_DRAW);
+		
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
 	}
 	
 	public static Mesh create(AIMesh mesh) {
