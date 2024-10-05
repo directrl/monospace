@@ -3,6 +3,7 @@ package org.black_matter.monospace.render;
 import lombok.Getter;
 import org.black_matter.monospace.core.Monospace;
 import org.black_matter.monospace.util.Resource;
+import org.lwjgl.assimp.AITexture;
 import org.lwjgl.system.MemoryStack;
 
 import java.io.Closeable;
@@ -35,15 +36,22 @@ public class Texture implements Closeable {
 	@Getter private final int width;
 	@Getter private final int height;
 	
-	private Texture(Resource resource, int id, int width, int height) {
+	Texture(Resource resource, int id, int width, int height) {
 		this.resource = resource;
 		this.id = id;
 		this.width = width;
 		this.height = height;
 	}
 	
+	public static Texture create(Resource resource, AITexture aiTexture) {
+		var cachedTexture = Cache.TEXTURES.get(resource.name);
+		if(cachedTexture != null) return cachedTexture;
+		
+		return loadFromBuffer(resource, aiTexture.pcDataCompressed());
+	}
+	
 	public static Texture create(Resource resource) {
-		var cachedTexture = Cache.get(resource);
+		var cachedTexture = Cache.TEXTURES.get(resource.name);
 		if(cachedTexture != null) return cachedTexture;
 		
 		byte[] texData;
@@ -60,12 +68,16 @@ public class Texture implements Closeable {
 		texBuffer.put(texData);
 		texBuffer.position(0);
 		
+		return loadFromBuffer(resource, texBuffer);
+	}
+	
+	private static Texture loadFromBuffer(Resource resource, ByteBuffer buffer) {
 		try(MemoryStack stack = MemoryStack.stackPush()) {
 			IntBuffer wBuffer = stack.mallocInt(1);
 			IntBuffer hBuffer = stack.mallocInt(1);
 			IntBuffer channels = stack.mallocInt(1);
 			
-			var image = stbi_load_from_memory(texBuffer, wBuffer, hBuffer, channels, 4);
+			var image = stbi_load_from_memory(buffer, wBuffer, hBuffer, channels, 4);
 			
 			if(image == null) {
 				Monospace.LOGGER.error("Could not load texture",
@@ -90,6 +102,8 @@ public class Texture implements Closeable {
 				glGenerateMipmap(GL_TEXTURE_2D);
 			}
 			
+			Monospace.LOGGER.trace("Caching texture " + texture);
+			Cache.TEXTURES.put(resource.name, texture);
 			return texture;
 		}
 	}
@@ -101,35 +115,21 @@ public class Texture implements Closeable {
 	@Override
 	public void close() {
 		glDeleteTextures(id);
-		Cache.remove(resource);
+		Cache.TEXTURES.remove(resource.name);
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("Texture{name=%s, width=%d, height=%d, resource=%s}",
+			resource.name, width, height, resource);
 	}
 	
 	private static class Cache {
 		
-		private static final Map<String, Texture> textures = new HashMap<>();
-		
-		public static Texture get(Resource resource) {
-			if(textures.containsKey(resource.name)) {
-				return textures.get(resource.name);
-			}
-			
-			return textures.get("missingno");
-		}
-		
-		public static void set(Resource resource, Texture texture) {
-			if(resource.name.equals(DEFAULT_TEXTURE.resource.getName())) {
-				throw new InvalidParameterException("Cannot change the default texture");
-			}
-			
-			textures.put(resource.name, texture);
-		}
-		
-		public static void remove(Resource resource) {
-			textures.remove(resource.name);
-		}
+		private static final Map<String, Texture> TEXTURES = new HashMap<>();
 		
 		public static void close() {
-			textures.values().forEach(Texture::close);
+			TEXTURES.values().forEach(Texture::close);
 		}
 	}
 	

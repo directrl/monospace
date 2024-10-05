@@ -2,7 +2,7 @@ package org.black_matter.monospace.object.objects;
 
 import org.black_matter.monospace.object.GameObject;
 import org.black_matter.monospace.object.components.Renderable;
-import org.black_matter.monospace.render.Model;
+import org.black_matter.monospace.model.Model;
 
 import java.util.HashMap;
 
@@ -12,7 +12,7 @@ public class CubeObject extends GameObject implements Renderable {
 		put(Renderable.class, (Renderable<CubeObject>) o -> o.render(o));
 	}};
 	
-	private static final Model MODEL = Model.Registry.MODELS.get("cube");
+	private static final Model MODEL = null; // TODO
 	
 	public CubeObject() { super(COMPONENTS); }
 	

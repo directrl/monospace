@@ -1,16 +1,17 @@
 package main;
 
-import object.CustomModels;
 import object.TestObject;
 import org.black_matter.monospace.core.Monospace;
 import org.black_matter.monospace.events.input.MouseMoveEvent;
 import org.black_matter.monospace.input.KeyBinding;
+import org.black_matter.monospace.model.Model;
+import org.black_matter.monospace.model.ModelLoader;
 import org.black_matter.monospace.object.GameObject;
 import org.black_matter.monospace.object.objects.CubeObject;
 import org.black_matter.monospace.render.camera.PerspectiveCamera;
+import org.black_matter.monospace.util.Resource;
 import org.black_matter.monospace.world.GameWorld;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL30;
 
 import java.util.Random;
 
@@ -28,6 +29,8 @@ public class Game extends Monospace {
 	
 	CubeObject cube;
 	GameObject test;
+	GameObject test2;
+	GameObject test3;
 	
 	KeyBinding cameraForward;
 	KeyBinding cameraBackward;
@@ -39,11 +42,17 @@ public class Game extends Monospace {
 	
 	float mouseSensitivity;
 	
+	Model monument;
+	Model untitled;
+	Model knight;
+	
 	@Override
 	public void init() {
 		super.init();
 		
-		CustomModels.load();
+		monument = ModelLoader.load(gameResources().get(Resource.Type.MODELS, "monument.obj"));
+		untitled = ModelLoader.load(gameResources().get(Resource.Type.MODELS, "Untitled.gltf"));
+		knight = ModelLoader.load(gameResources().get(Resource.Type.MODELS, "knight/chr_knight.obj"));
 		
 		mouseSensitivity = Game.gameSettings().getOptionOrDefault("mouseSensitivity", 0.5f);
 		
@@ -62,10 +71,16 @@ public class Game extends Monospace {
 		camera = new PerspectiveCamera();
 		camera.setFov(45f);
 		
-		test = new TestObject().z(-5).x(-2);
+		test = new TestObject(knight).z(-5).x(-5);
+		test2 = new TestObject(untitled).z(-5).x(0);
+		test3 = new TestObject(monument).z(-5).x(5);
+		
 		cube = (CubeObject) new CubeObject().z(-5);
-		world.getObjectManager().add(cube);
+		
+		//world.getObjectManager().add(cube);
 		world.getObjectManager().add(test);
+		world.getObjectManager().add(test2);
+		world.getObjectManager().add(test3);
 		
 		onEvent(MouseMoveEvent.class, Game.input(), e -> {
 			if(cameraMove.isDown()) {

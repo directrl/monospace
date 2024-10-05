@@ -50,14 +50,14 @@ public class Resource {
 	
 	@Override
 	public String toString() {
-		return String.format("Resource[type=%s, path=%s]", type.name(), path);
+		return String.format("Resource{type=%s, path=%s}", type.name(), path);
 	}
 	
 	public enum Type {
 		
 		SHADERS("shaders", ""),
 		TEXTURES("textures", ".png"),
-		MODELS("models", ".gltf"),
+		MODELS("models", ""),
 		LOCALISATION("i18n", ".properties"),
 		SOUND_EFFECTS("audio/sfx", ".wav"),
 		MUSIC("audio/music", ".ogg"),
