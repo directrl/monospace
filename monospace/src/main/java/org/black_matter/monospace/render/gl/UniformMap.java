@@ -2,6 +2,7 @@ package org.black_matter.monospace.render.gl;
 
 import lombok.Getter;
 import org.joml.Matrix4f;
+import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
@@ -38,6 +39,13 @@ public class UniformMap {
 			
 			glUniformMatrix4fv(location, false, value.get(stack.mallocFloat(16)));
 		}
+	}
+	
+	public void load(String name, Vector4f value) {
+		Integer location = uniforms.get(name);
+		if(location == null) location = create(name);
+		
+		glUniform4f(location, value.x, value.y, value.z, value.w);
 	}
 	
 	public void load(String name, int value) {

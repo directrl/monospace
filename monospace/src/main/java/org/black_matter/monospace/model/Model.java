@@ -7,7 +7,9 @@ import org.black_matter.monospace.core.Monospace;
 import org.black_matter.monospace.render.Material;
 import org.black_matter.monospace.render.Mesh;
 import org.black_matter.monospace.render.Texture;
+import org.black_matter.monospace.render.gl.ShaderProgram;
 import org.black_matter.monospace.util.Resource;
+import org.black_matter.monospace.world.GameWorld;
 import org.lwjgl.opengl.GL30;
 
 import java.io.Closeable;
@@ -30,6 +32,7 @@ public class Model implements Closeable {
 		materials.forEach(material -> {
 			GL30.glActiveTexture(GL30.GL_TEXTURE0);
 			material.getTexture().bind();
+			GameWorld.WORLD_SHADER.getUniforms().load("material.diffuseColor", material.getDiffuseColor());
 			material.getMeshes().forEach(Mesh::render);
 		});
 	}

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.black_matter.monospace.core.Monospace;
 import org.black_matter.monospace.model.Model;
+import org.black_matter.monospace.render.gl.ShaderProgram;
 import org.black_matter.monospace.util.Resource;
 import org.joml.Vector4f;
 import org.lwjgl.PointerBuffer;
@@ -37,10 +38,7 @@ public class Material implements Closeable {
 	public Material(Texture texture, List<Mesh> meshes) {
 		this.texture = texture;
 		this.meshes = meshes;
-	}
-	
-	public Material(AIMaterial aiMaterial) {
-		this();
+		this.diffuseColor = new Vector4f(0, 0, 0, 1);
 	}
 	
 	public static Material createForModel(AIScene aiScene, AIMaterial aiMaterial, Model model) {
@@ -50,7 +48,10 @@ public class Material implements Closeable {
 			var color = AIColor4D.create();
 			int res = aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_DIFFUSE, aiTextureType_NONE, 0, color);
 			if(res == aiReturn_SUCCESS) {
-				material.setDiffuseColor(new Vector4f(color.r(), color.g(), color.b(), color.a()));
+				// something is broken idk we just assume its broken
+				if(color.r() != 1 && color.g() != 1 && color.b() != 1 && color.a() != 1) {
+					material.setDiffuseColor(new Vector4f(color.r(), color.g(), color.b(), color.a()));
+				}
 			}
 			
 			var aiTexturePath = AIString.calloc(stack);
@@ -92,8 +93,6 @@ public class Material implements Closeable {
 			}
 			
 		ret:
-			material.setDiffuseColor(new Vector4f(0, 0, 0, 1));
-			
 			if(texture == null) {
 				material.setTexture(Texture.DEFAULT_TEXTURE);
 			} else {

@@ -32,7 +32,9 @@ public class GameWorld {
 			var renderable = object.getComponent(Renderable.class);
 			if(renderable != null) {
 				renderable.computeRenderMatrix(object);
+				
 				WORLD_SHADER.getUniforms().load("modelMatrix", renderable.renderMatrix);
+				
 				renderable.render(object);
 			}
 		});
