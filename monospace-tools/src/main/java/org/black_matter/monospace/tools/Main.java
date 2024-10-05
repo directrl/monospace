@@ -38,6 +38,7 @@ public class Main {
 		switch(tool) {
 			case "worldeditor":
 				new WorldEditor().launch();
+				break;
 			default:
 				throw new RuntimeException("Tool not implemented: " + tool);
 		}
