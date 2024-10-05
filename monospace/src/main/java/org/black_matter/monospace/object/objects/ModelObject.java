@@ -6,18 +6,23 @@ import org.black_matter.monospace.model.Model;
 
 import java.util.HashMap;
 
-public class CubeObject extends GameObject implements Renderable {
+public class ModelObject extends GameObject implements Renderable {
 	
 	private static final HashMap<Class<? extends Component>, Component> COMPONENTS = new HashMap<>() {{
-		put(Renderable.class, (Renderable<CubeObject>) o -> o.render(o));
+		put(Renderable.class, (Renderable<ModelObject>) o -> o.render(o));
 	}};
 	
-	private static final Model MODEL = null; // TODO
+	private final Model model;
 	
-	public CubeObject() { super(COMPONENTS); }
+	public ModelObject(Model model) {
+		super(COMPONENTS);
+		
+		this.model = model;
+		this.aabb = model.getAabb();
+	}
 	
 	@Override
 	public void render(GameObject o) {
-		MODEL.render();
+		model.render();
 	}
 }
