@@ -35,7 +35,7 @@ public class Texture implements Closeable {
 	@Getter private final int width;
 	@Getter private final int height;
 	
-	private Texture(Resource resource, int id, int width, int height) {
+	Texture(Resource resource, int id, int width, int height) {
 		this.resource = resource;
 		this.id = id;
 		this.width = width;

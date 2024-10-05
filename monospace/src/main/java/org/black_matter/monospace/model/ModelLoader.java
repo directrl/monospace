@@ -15,6 +15,7 @@ import org.lwjgl.system.MemoryStack;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.CharBuffer;
 import java.nio.IntBuffer;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -47,7 +48,7 @@ public class ModelLoader {
 		modelBuffer.put(modelData);
 		modelBuffer.position(0);
 		
-		try(var scene = aiImportFile(modelBuffer, flags)) {
+		try(var scene = aiImportFileFromMemory(modelBuffer, flags, (CharSequence) null)) {
 			if(scene == null) {
 				Monospace.LOGGER.error("Could not load model",
 					new LoadingException(modelResource.getPath()));
@@ -58,7 +59,7 @@ public class ModelLoader {
 			
 			for(int i = 0; i < scene.mNumMaterials(); i++) {
 				var aiMaterial = AIMaterial.create(scene.mMaterials().get(i));
-				materials.add(Material.create(aiMaterial, modelResource.getName()));
+				materials.add(Material.create(scene, aiMaterial, modelResource.getName()));
 			}
 			
 			PointerBuffer aiMeshes = scene.mMeshes();

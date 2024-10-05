@@ -12,11 +12,12 @@ public class TestObject extends GameObject implements Renderable {
 		put(Renderable.class, (Renderable<TestObject>) o -> o.render(o));
 	}};
 	
-	private static Model model;
+	private Model model;
 	
-	public TestObject() {
+	public TestObject(Model model) {
 		super(COMPONENTS);
 		if(model == null) model = Model.Registry.MODELS.get("test");
+		this.model = model;
 	}
 	
 	@Override
