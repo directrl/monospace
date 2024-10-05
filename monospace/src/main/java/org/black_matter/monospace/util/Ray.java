@@ -66,11 +66,6 @@ public class Ray {
 			renderable.computeRenderMatrix(object);
 			var modelMatrix = renderable.renderMatrix;
 			
-			modelMatrix
-				.translate(object.position())
-				.rotate(object.rotation())
-				.scale(object.scale());
-			
 			for(var aabb : object.aabb()) {
 				var aabbMin = aabb.min();
 				min.set(aabbMin.x, aabbMin.y, aabbMin.z, 1.0f);
@@ -91,8 +86,6 @@ public class Ray {
 					hitObject = object;
 				}
 			}
-			
-			modelMatrix.identity();
 		}
 		
 		return hitObject;

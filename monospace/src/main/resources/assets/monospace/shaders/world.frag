@@ -9,8 +9,12 @@ struct Material {
 
 uniform sampler2D texSampler;
 uniform Material material;
+uniform int selection;
 
-void main()
-{
+void main() {
     fragColor = texture(texSampler, outTexCoord) + material.diffuseColor;
+
+    if(selection > 0) {
+        fragColor = vec4(fragColor.x * 1.5, fragColor.y * 1.5, fragColor.z * 1.5, fragColor.w);
+    }
 }

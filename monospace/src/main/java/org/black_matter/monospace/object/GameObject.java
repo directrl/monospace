@@ -82,6 +82,7 @@ public abstract class GameObject {
 	
 	@Override
 	public boolean equals(Object obj) {
+		if(obj == null) return false;
 		if(obj instanceof GameObject) {
 			return id == ((GameObject) obj).getId();
 		} else {
