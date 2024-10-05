@@ -9,6 +9,7 @@ import org.black_matter.monospace.model.ModelLoader;
 import org.black_matter.monospace.object.GameObject;
 import org.black_matter.monospace.object.objects.ModelObject;
 import org.black_matter.monospace.render.camera.PerspectiveCamera;
+import org.black_matter.monospace.util.Ray;
 import org.black_matter.monospace.util.Resource;
 import org.black_matter.monospace.world.GameWorld;
 import org.lwjgl.glfw.GLFW;
@@ -40,11 +41,15 @@ public class Game extends Monospace {
 	KeyBinding cameraDown;
 	KeyBinding cameraMove;
 	
+	KeyBinding objectPick;
+	
 	float mouseSensitivity;
 	
 	Model monument;
 	Model untitled;
 	Model knight;
+	
+	Ray ray;
 	
 	@Override
 	public void init() {
@@ -64,6 +69,8 @@ public class Game extends Monospace {
 		cameraDown = keyBindings().registerBinding(new KeyBinding("cameraDown", GLFW.GLFW_KEY_LEFT_SHIFT, 0));
 		
 		cameraMove = keyBindings().registerBinding(new KeyBinding("cameraMove", GLFW.GLFW_MOUSE_BUTTON_RIGHT, 0));
+		
+		objectPick = keyBindings().registerBinding(new KeyBinding("objectPick", GLFW.GLFW_MOUSE_BUTTON_LEFT, 0));
 		
 		world = new GameWorld();
 		world.load();
@@ -91,6 +98,8 @@ public class Game extends Monospace {
 				Game.camera().computeViewMatrix();
 			}
 		});
+		
+		ray = new Ray(camera, world);
 		
 		window().show();
 	}
@@ -120,6 +129,14 @@ public class Game extends Monospace {
 			cameraMoveVector[4],
 			cameraMoveVector[5]
 		);
+		
+		if(objectPick.wasPressed()) {
+			var o = ray.getHitObject();
+			
+			if(o != null) {
+				System.out.println("hit object! " + o);
+			}
+		}
 	}
 	
 	@Override

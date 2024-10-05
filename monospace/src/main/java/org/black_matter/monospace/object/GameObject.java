@@ -89,5 +89,11 @@ public abstract class GameObject {
 		}
 	}
 	
+	@Override
+	public String toString() {
+		return String.format("GameObject{id=%d, world=%s, position=%s}",
+			id, world, position);
+	}
+	
 	public interface Component { }
 }

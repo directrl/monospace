@@ -21,7 +21,7 @@ public class Input implements EventCaller {
 		GLFW.glfwSetCursorEnterCallback(Monospace.window().getHandle(), (handle, entered) -> mouseInWindow = entered);
 	}
 	
-	public Vector2d getMousePosition() {
+	public static Vector2d getMousePosition() {
 		try(MemoryStack stack = MemoryStack.stackPush()) {
 			var xBuffer = stack.mallocDouble(1);
 			var yBuffer = stack.mallocDouble(1);
@@ -32,7 +32,7 @@ public class Input implements EventCaller {
 		}
 	}
 	
-	public boolean isKeyDown(int key) {
+	public static boolean isKeyDown(int key) {
 		return GLFW.glfwGetKey(Monospace.window().getHandle(), key) == GLFW.GLFW_PRESS;
 	}
 	
