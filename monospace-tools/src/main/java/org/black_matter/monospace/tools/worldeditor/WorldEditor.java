@@ -9,6 +9,7 @@ import org.black_matter.monospace.input.KeyBinding;
 import org.black_matter.monospace.object.GameObject;
 import org.black_matter.monospace.render.camera.PerspectiveCamera;
 import org.black_matter.monospace.tools.worldeditor.objects.CoordinateGrid;
+import org.black_matter.monospace.tools.worldeditor.ui.InfoPanel;
 import org.black_matter.monospace.tools.worldeditor.ui.ObjectEditor;
 import org.black_matter.monospace.tools.worldeditor.ui.PrefabCollection;
 import org.black_matter.monospace.tools.worldeditor.keybindings.CameraMovement;
@@ -17,6 +18,7 @@ import org.black_matter.monospace.tools.worldeditor.world.WorkspaceWorld;
 import org.black_matter.monospace.ui.DebugUI;
 import org.black_matter.monospace.util.Ray;
 import org.black_matter.monospace.world.GameWorld;
+import org.checkerframework.checker.units.qual.C;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
@@ -29,8 +31,9 @@ public class WorldEditor extends Monospace {
 	
 	private static PrefabCollection prefabCollection;
 	private static ObjectEditor objectEditor;
+	private static InfoPanel infoPanel;
 	
-	private static CoordinateGrid coordinateGrid;
+	public static CoordinateGrid coordinateGrid;
 	
 	private static Ray worldRay;
 	
@@ -52,9 +55,10 @@ public class WorldEditor extends Monospace {
 		
 		selectObject = keyBindings().registerBinding(new KeyBinding("object_select", GLFW.GLFW_MOUSE_BUTTON_LEFT, 0));
 		
-		objectEditor = new ObjectEditor();
+		coordinateGrid = new CoordinateGrid(40, 1.0f);
 		
-		coordinateGrid = new CoordinateGrid(20, 1.0f);
+		objectEditor = new ObjectEditor();
+		infoPanel = new InfoPanel();
 		
 		onEvent(WorldLoadEvent.class, null, e -> {
 			worldRay = new Ray(camera, e.world());
@@ -158,17 +162,39 @@ public class WorldEditor extends Monospace {
 				ImGui.endMenu();
 			}
 			
+			if(ImGui.beginMenu("Windows")) {
+				ImGui.menuItem("InfoPanel", "", infoPanel.open);
+				
+				ImGui.endMenu();
+			}
+			
 			ImGui.endMainMenuBar();
 		}
 		
 		if(prefabCollection != null) prefabCollection.ui();
 		if(objectEditor != null) objectEditor.ui(prefabCollection);
+		if(infoPanel != null) {
+			infoPanel.ui();
+			
+			if(infoPanel.cGridLines[0] != coordinateGrid.getLines()
+				|| infoPanel.cGridSpacing[0] != coordinateGrid.getSpacing()) {
+				
+				var newCoordinateGrid = new CoordinateGrid(
+					infoPanel.cGridLines[0],
+					infoPanel.cGridSpacing[0]
+				);
+				
+				world.getObjectManager().replace(coordinateGrid, newCoordinateGrid);
+				coordinateGrid = newCoordinateGrid;
+			}
+		}
 		
 		imgui().end();
 	}
 	
 	public static void chooseAndSpawnModel(Vector3f position) {
-		var modelPath = FileDialogs.openFileDialog(new String[] { "*.gltf" }, "GLTF models (*.gltf)");
+		var modelPath = FileDialogs.openFileDialog(new String[] { "*.gltf", "*.glb" },
+			"GLTF models (*.gltf, *.glb)");
 		
 		if(modelPath != null && !modelPath.isEmpty()) {
 			((WorkspaceWorld) world).spawnCustomModel(modelPath).position(new Vector3f(position));

@@ -3,6 +3,9 @@ package org.black_matter.monospace.tools.worldeditor.ui;
 import imgui.ImGui;
 import imgui.type.ImFloat;
 import org.black_matter.monospace.object.GameObject;
+import org.black_matter.monospace.util.QuaternionUtils;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import static org.black_matter.monospace.tools.worldeditor.WorldEditor.*;
 
@@ -14,15 +17,20 @@ public class ObjectEditor {
 	private final ImFloat objectY = new ImFloat(0);
 	private final ImFloat objectZ = new ImFloat(0);
 	
-	private final ImFloat objectRotationX = new ImFloat(0);
+	/*private final ImFloat objectRotationX = new ImFloat(0);
 	private final ImFloat objectRotationY = new ImFloat(0);
-	private final ImFloat objectRotationZ = new ImFloat(0);
-	private final ImFloat objectRotationW = new ImFloat(0);
+	private final ImFloat objectRotationZ = new ImFloat(0);*/
+	
+	private final float[] objectRotationX = new float[1];
+	private final float[] objectRotationY = new float[1];
+	private final float[] objectRotationZ = new float[1];
 	
 	public void ui(PrefabCollection prefabCollection) {
 		if(ImGui.begin("Objects")) {
 			if(ImGui.beginListBox("Object listing")) {
 				for(var object : world().getObjectManager().get().values()) {
+					if(object.equals(coordinateGrid)) continue;
+					
 					if(ImGui.selectable(String.format("ID: %d, %s", object.getId(),
 						prefabCollection != null && prefabCollection.prefabObjects.containsKey(object.getId()) ?
 							prefabCollection.prefabObjects.get(object.getId()).getId()
@@ -34,10 +42,11 @@ public class ObjectEditor {
 						objectY.set(object.y());
 						objectZ.set(object.z());
 						
-						objectRotationX.set((float) Math.toDegrees(object.rotation().x));
-						objectRotationY.set((float) Math.toDegrees(object.rotation().y));
-						objectRotationZ.set((float) Math.toDegrees(object.rotation().z));
-						objectRotationW.set((float) Math.toDegrees(object.rotation().w));
+						var rot = QuaternionUtils.getRotationXYZ(object.rotation());
+						
+						objectRotationX[0] = ((float) Math.toDegrees(rot.x));
+						objectRotationY[0] = ((float) Math.toDegrees(rot.y));
+						objectRotationZ[0] = ((float) Math.toDegrees(rot.z));
 					}
 				}
 				
@@ -71,18 +80,23 @@ public class ObjectEditor {
 				
 				ImGui.separator();
 				ImGui.text("Rotation");
-				ImGui.inputFloat("rX", objectRotationX, 15.0f, 45.0f);
-				ImGui.inputFloat("rY", objectRotationY, 15.0f, 45.0f);
-				ImGui.inputFloat("rZ", objectRotationZ, 15.0f, 45.0f);
-				ImGui.inputFloat("rW", objectRotationW, 15.0f, 45.0f);
+				ImGui.sliderFloat("rX", objectRotationX, 0, 360, "%.0f");
+				ImGui.sliderFloat("rY", objectRotationY, 0, 360, "%.0f");
+				ImGui.sliderFloat("rZ", objectRotationZ, 0, 360, "%.0f");
 				
 				// TODO why does rotation not work
-				/*object.rotation(
-					(float) Math.toRadians(objectRotationX.get()),
-					(float) Math.toRadians(objectRotationY.get()),
-					(float) Math.toRadians(objectRotationZ.get()),
-					(float) Math.toRadians(objectRotationW.get())
+				/*object.rotation().fromAxisAngleDeg(
+					(float) objectRotationX.get(),
+					(float) objectRotationY.get(),
+					(float) objectRotationZ.get(),
+					(float) objectRotationW.get()
 				);*/
+				
+				object.rotation().rotationXYZ(
+					(float) Math.toRadians(objectRotationX[0]),
+					(float) Math.toRadians(objectRotationY[0]),
+					(float) Math.toRadians(objectRotationZ[0])
+				);
 			}
 			
 			ImGui.end();

@@ -27,10 +27,15 @@ public class CoordinateGrid extends GameObject implements Renderable {
 	
 	@Getter private final float size;
 	
+	@Getter private final int lines;
+	@Getter private final float spacing;
+	
 	public CoordinateGrid(int lines, float spacing) {
 		super(COMPONENTS);
 		
 		size = lines * spacing;
+		this.lines = lines;
+		this.spacing = spacing;
 		
 		float[] vertices = new float[lines * 2 * 2 * 3];
 		float[] texCoords = new float[vertices.length / 3 * 2];
@@ -95,6 +100,8 @@ public class CoordinateGrid extends GameObject implements Renderable {
 			texCoords[++ti] = 0;
 			indices[++ii] = ii;
 		}
+		
+		System.out.println(lines);
 		
 		var mesh = new LineMesh(vertices, texCoords, indices);
 		var material = new Material(Texture.create(
