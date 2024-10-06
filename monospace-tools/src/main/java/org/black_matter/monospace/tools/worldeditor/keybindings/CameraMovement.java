@@ -43,8 +43,8 @@ public class CameraMovement implements EventCaller {
 	public void update(float delta) {
 		float[] cameraMoveVector = new float[6];
 		
-		if(cameraUp.isDown()) cameraMoveVector[0] = CAMERA_SPEED * delta;
-		if(cameraDown.isDown()) cameraMoveVector[1] = CAMERA_SPEED * delta;
+		if(cameraUp.isDown()) camera().getPosition().y += CAMERA_SPEED * delta;
+		if(cameraDown.isDown()) camera().getPosition().y -= CAMERA_SPEED * delta;
 		if(cameraLeft.isDown()) cameraMoveVector[2] = CAMERA_SPEED * delta;
 		if(cameraRight.isDown()) cameraMoveVector[3] = CAMERA_SPEED * delta;
 		if(cameraForward.isDown()) cameraMoveVector[4] = CAMERA_SPEED * delta;
