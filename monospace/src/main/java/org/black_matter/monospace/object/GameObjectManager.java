@@ -33,6 +33,14 @@ public class GameObjectManager {
 		object.setId(-1);
 	}
 	
+	public void replace(GameObject toReplace, GameObject with) {
+		with.setId(toReplace.getId());
+		remove(toReplace);
+		
+		objects.put(with.getId(), with);
+		with.setWorld(world);
+	}
+	
 	public <T extends GameObject> T query(long id) {
 		return (T) objects.get(id);
 	}
