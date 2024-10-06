@@ -1,6 +1,7 @@
 package org.black_matter.monospace.render;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.black_matter.monospace.model.Model;
 import org.lwjgl.assimp.AIFace;
 import org.lwjgl.assimp.AIMesh;
@@ -26,6 +27,8 @@ public class Mesh implements Closeable {
 	
 	@Getter private int vertexCount;
 	@Getter private int vaoId;
+	
+	@Getter @Setter private int type = GL_TRIANGLES;
 	
 	public Mesh(float[] positions, float[] texCoords, int[] indices) {
 		this.vertexCount = indices.length;
@@ -121,7 +124,7 @@ public class Mesh implements Closeable {
 	
 	public void render() {
 		glBindVertexArray(vaoId);
-		glDrawElements(GL_TRIANGLES, vertexCount, GL_UNSIGNED_INT, 0);
+		glDrawElements(type, vertexCount, GL_UNSIGNED_INT, 0);
 	}
 	
 	@Override
