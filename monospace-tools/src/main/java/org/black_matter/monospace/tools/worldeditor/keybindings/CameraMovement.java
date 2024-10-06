@@ -4,6 +4,7 @@ import org.black_matter.monospace.event.EventCaller;
 import org.black_matter.monospace.events.input.MouseMoveEvent;
 import org.black_matter.monospace.input.KeyBinding;
 import org.black_matter.monospace.tools.worldeditor.WorldEditor;
+import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
 
 import static org.black_matter.monospace.tools.worldeditor.WorldEditor.*;
@@ -31,10 +32,21 @@ public class CameraMovement implements EventCaller {
 		
 		onEvent(MouseMoveEvent.class, input(), e -> {
 			if(cameraMove.isDown()) {
-				camera().getRotation().add(
+				var newRot = new Vector2f(camera().getRotation()).add(
 					(float) -Math.toRadians(-e.dy() * 1),
 					(float) -Math.toRadians(-e.dx() * 1)
 				);
+				
+				var degPitch = Math.toDegrees(newRot.x);
+				var degYaw = Math.toDegrees(newRot.y);
+				
+				if(degPitch >= 90) {
+					newRot.x = (float) Math.toRadians(89.9);
+				} else if(degPitch <= -90) {
+					newRot.x = (float) Math.toRadians(-89.9);
+				}
+				
+				camera().setRotation(newRot);
 				camera().computeViewMatrix();
 			}
 		});
