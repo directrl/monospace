@@ -2,12 +2,13 @@ package org.black_matter.monospace.tools.worldeditor.ui;
 
 import imgui.ImGui;
 import imgui.type.ImFloat;
+import org.black_matter.monospace.object.GameObject;
 
 import static org.black_matter.monospace.tools.worldeditor.WorldEditor.*;
 
 public class ObjectEditor {
 	
-	private long selectedObjectId = -1;
+	public GameObject selectedObject = null;
 	
 	private final ImFloat objectX = new ImFloat(0);
 	private final ImFloat objectY = new ImFloat(0);
@@ -27,7 +28,7 @@ public class ObjectEditor {
 							prefabCollection.prefabObjects.get(object.getId()).getId()
 							: object.getClass().getSimpleName()))) {
 						
-						selectedObjectId = object.getId();
+						selectedObject = object;
 						
 						objectX.set(object.x());
 						objectY.set(object.y());
@@ -43,8 +44,8 @@ public class ObjectEditor {
 				ImGui.endListBox();
 			}
 			
-			if(selectedObjectId >= 0) {
-				var object = world().getObjectManager().query(selectedObjectId);
+			if(selectedObject != null) {
+				var object = selectedObject;
 				
 				/*ImGui.text(String.format("x: %.2f, y: %.2f, z: %.2f",
 					object.x(), object.y(), object.z()));*/
@@ -55,7 +56,7 @@ public class ObjectEditor {
 				ImGui.separator();
 				if(ImGui.button("Remove")) {
 					world().getObjectManager().remove(object);
-					selectedObjectId = -1;
+					selectedObject = null;
 				}
 				
 				ImGui.separator();
@@ -70,10 +71,10 @@ public class ObjectEditor {
 				
 				ImGui.separator();
 				ImGui.text("Rotation");
-				ImGui.inputFloat("X", objectRotationX, 15.0f, 45.0f);
-				ImGui.inputFloat("Y", objectRotationY, 15.0f, 45.0f);
-				ImGui.inputFloat("Z", objectRotationZ, 15.0f, 45.0f);
-				ImGui.inputFloat("W", objectRotationW, 15.0f, 45.0f);
+				ImGui.inputFloat("rX", objectRotationX, 15.0f, 45.0f);
+				ImGui.inputFloat("rY", objectRotationY, 15.0f, 45.0f);
+				ImGui.inputFloat("rZ", objectRotationZ, 15.0f, 45.0f);
+				ImGui.inputFloat("rW", objectRotationW, 15.0f, 45.0f);
 				
 				// TODO why does rotation not work
 				/*object.rotation(

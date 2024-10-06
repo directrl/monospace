@@ -2,6 +2,11 @@ package org.black_matter.monospace.tools.worldeditor;
 
 import imgui.ImGui;
 import org.black_matter.monospace.core.Monospace;
+import org.black_matter.monospace.events.input.MouseMoveEvent;
+import org.black_matter.monospace.events.render.gl.ShaderPassPreEvent;
+import org.black_matter.monospace.events.world.WorldLoadEvent;
+import org.black_matter.monospace.input.KeyBinding;
+import org.black_matter.monospace.object.GameObject;
 import org.black_matter.monospace.render.camera.PerspectiveCamera;
 import org.black_matter.monospace.tools.worldeditor.objects.CoordinateGrid;
 import org.black_matter.monospace.tools.worldeditor.ui.ObjectEditor;
@@ -10,6 +15,8 @@ import org.black_matter.monospace.tools.worldeditor.keybindings.CameraMovement;
 import org.black_matter.monospace.tools.worldeditor.keybindings.EditorShortcuts;
 import org.black_matter.monospace.tools.worldeditor.world.WorkspaceWorld;
 import org.black_matter.monospace.ui.DebugUI;
+import org.black_matter.monospace.util.Ray;
+import org.black_matter.monospace.world.GameWorld;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
@@ -18,10 +25,14 @@ public class WorldEditor extends Monospace {
 	private static CameraMovement cameraMovement;
 	private static EditorShortcuts editorShortcuts;
 	
+	private static KeyBinding selectObject;
+	
 	private static PrefabCollection prefabCollection;
 	private static ObjectEditor objectEditor;
 	
 	private static CoordinateGrid coordinateGrid;
+	
+	private static Ray worldRay;
 	
 	public WorldEditor() {
 		super("monospace-worldeditor");
@@ -39,9 +50,25 @@ public class WorldEditor extends Monospace {
 		cameraMovement = new CameraMovement();
 		editorShortcuts = new EditorShortcuts();
 		
+		selectObject = keyBindings().registerBinding(new KeyBinding("object_select", GLFW.GLFW_MOUSE_BUTTON_LEFT, 0));
+		
 		objectEditor = new ObjectEditor();
 		
 		coordinateGrid = new CoordinateGrid(20, 1.0f);
+		
+		onEvent(WorldLoadEvent.class, null, e -> {
+			worldRay = new Ray(camera, e.world());
+			
+			onEvent(ShaderPassPreEvent.class, e.world(), e1 -> {
+				if(e1.program().getId() == GameWorld.WORLD_SHADER.getId()) {
+					if(e1.parameter().equals(objectEditor.selectedObject)) {
+						e1.program().getUniforms().load("selection", 1);
+					} else {
+						e1.program().getUniforms().load("selection", 0);
+					}
+				}
+			});
+		});
 		
 		world = new WorkspaceWorld();
 		world.load();
@@ -65,6 +92,10 @@ public class WorldEditor extends Monospace {
 		gridPos.round();
 		
 		coordinateGrid.position(gridPos);
+		
+		if(selectObject.wasPressed()) {
+			if(worldRay != null) objectEditor.selectedObject = worldRay.getHitObject();
+		}
 	}
 	
 	@Override
