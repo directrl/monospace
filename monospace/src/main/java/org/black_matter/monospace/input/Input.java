@@ -1,5 +1,6 @@
 package org.black_matter.monospace.input;
 
+import imgui.ImGui;
 import org.black_matter.monospace.core.Monospace;
 import org.black_matter.monospace.event.EventCaller;
 import org.black_matter.monospace.events.input.MouseMoveEvent;
@@ -38,14 +39,20 @@ public class Input implements EventCaller {
 	
 	private void keyCallback(long window, int key, int scancode, int action, int mods) {
 		Monospace.imgui().imGlfw.keyCallback(window, key, scancode, action, mods);
-		Monospace.keyBindings().callback(window, key, scancode, action, mods);
+		
+		if(!ImGui.getIO().getWantCaptureKeyboard()) {
+			Monospace.keyBindings().callback(window, key, scancode, action, mods);
+		}
 	}
 	
 	private void cursorPosCallback(long window, double x, double y) {
 		if(!mouseInWindow) return;
 		
 		Monospace.imgui().imGlfw.cursorPosCallback(window, x, y);
-		callEvent(MouseMoveEvent.class, this, new MouseMoveEvent(x, y, x - lastCursorX, y - lastCursorY));
+		
+		if(!ImGui.getIO().getWantCaptureMouse()) {
+			callEvent(MouseMoveEvent.class, this, new MouseMoveEvent(x, y, x - lastCursorX, y - lastCursorY));
+		}
 		
 		lastCursorX = x;
 		lastCursorY = y;
@@ -53,6 +60,9 @@ public class Input implements EventCaller {
 	
 	private void mouseButtonCallback(long window, int button, int action, int mods) {
 		Monospace.imgui().imGlfw.mouseButtonCallback(window, button, action, mods);
-		Monospace.keyBindings().callback(window, button, 0, action, mods);
+		
+		if(!ImGui.getIO().getWantCaptureMouse()) {
+			Monospace.keyBindings().callback(window, button, 0, action, mods);
+		}
 	}
 }
