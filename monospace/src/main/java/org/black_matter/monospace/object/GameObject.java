@@ -59,21 +59,11 @@ public abstract class GameObject {
 	public Quaternionf rotation() { return rotation; }
 	public GameObject rotation(Quaternionf rotation) { this.rotation = rotation; return this; }
 	
-	public GameObject rotation(float x, float y, float z, float angle) {
-		rotation.fromAxisAngleRad(x, y, z, angle);
-		return this;
-	}
+	public GameObject rotation(float x, float y, float z) { rotation.rotationXYZ(x, y, z); return this; }
+	public GameObject rotation(Vector3f xyz) { rotation.rotationXYZ(xyz.x, xyz.y, xyz.z); return this; }
 	
-	public GameObject rotate(float x, float y, float z, float angle) {
-		rotation.set(
-			rotation.x + x,
-			rotation.y + y,
-			rotation.z + z,
-			rotation.w + angle
-		);
-		
-		return this;
-	}
+	public GameObject rotate(float x, float y, float z) { rotation.rotateXYZ(x, y, z); return this; }
+	public GameObject rotate(Vector3f xyz) { rotation.rotateXYZ(xyz.x, xyz.y, xyz.z); return this; }
 	
 	public List<AABB> aabb() { return Collections.unmodifiableList(this.aabb); }
 	
